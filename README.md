@@ -2,7 +2,7 @@
 
 ## 1. rviz
 ```bash
-cd scout_ws
+cd ~/scout_ws
 source install/setup.bash
 ```
 ```bash
@@ -11,7 +11,7 @@ ros2 launch scout_description display_mini.launch.py
 
 ## 2. gazebo
 ```bash
-cd scout_ws
+cd ~/scout_ws
 source install/setup.bash 
 source /usr/share/gazebo-11/setup.bash
 ```
