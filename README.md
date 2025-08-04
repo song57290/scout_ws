@@ -13,3 +13,7 @@ ros2 launch scout_gazebo_sim scout_mini_empty_world.launch.py
 
 # 키보드 제어
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
+
+```python
+def hello_world():
+    print("Hello, World!")
