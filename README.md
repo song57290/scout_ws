@@ -4,13 +4,14 @@
 ```bash
 conda deactivate
 ```
+---
 
 ## 1. gazebo
 ---
 ```bash
 cd ~/scout_ws
 colcon build
-source install/setup.bash
+source ~/scout_ws/install/setup.bash
 source /usr/share/gazebo-11/setup.bash
 ```
 ---

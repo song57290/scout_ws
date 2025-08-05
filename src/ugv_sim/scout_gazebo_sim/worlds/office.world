@@ -39894,12 +39894,12 @@
       </camera>
     </gui>
      
-
+<!--
   <include>
     <uri>model://two_wheeled_robot_description</uri>
     <static>false</static>
     <pose>0.0 1.0 0.0 0 0 0</pose>
   </include>
-  
+-->
   </world>
 </sdf>
