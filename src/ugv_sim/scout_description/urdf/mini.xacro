@@ -12,6 +12,8 @@
     <xacro:include filename="$(find scout_description)/urdf/scout_mini_wheel_4.xacro" />
     <xacro:include filename="$(find scout_description)/urdf/velodyne.xacro"/>
     <xacro:include filename="$(find scout_description)/urdf/laser.xacro"/>
+    <xacro:include filename="$(find scout_description)/urdf/camera.xacro"/>
+    <xacro:include filename="$(find scout_description)/urdf/depth_camera.xacro"/>
 
     <!-- Variables -->
     <xacro:property name="M_PI" value="3.14159"/>

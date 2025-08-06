@@ -12,19 +12,14 @@
         <inertial>
             <mass value="0.1"/>
             <origin xyz="0 0 0"/>
-            <inertia ixx="0.001" ixy="0" ixz="0"
-                     iyy="0.001" iyz="0"
-                     izz="0.001"/>
+            <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
         </inertial>
         <visual>
             <geometry>
                 <box size="0.02 0.04 0.01"/>
             </geometry>
-            <material name="depth_camera_gray">
-                <ambient>0.5 0.5 0.5 1</ambient>
-                <diffuse>0.5 0.5 0.5 1</diffuse>
-                <specular>0.1 0.1 0.1 1</specular>
-                <emissive>0 0 0 1</emissive>
+            <material name="white">
+                <color rgba="0.1 0.1 0.8 1.0"/>
             </material>
         </visual>
         <collision>
