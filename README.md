@@ -28,7 +28,13 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 ---
 
-
+# 3. gzserver & gzclient 확인
+---
+```bash
+ps faux | grep gzclient
+ps faux | grep gzserver
+```
+---
 
 | 시나리오                                      | 권장 파일                           |
 | ----------------------------------------- | ------------------------------- |

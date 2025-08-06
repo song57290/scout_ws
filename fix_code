@@ -1,0 +1,21 @@
+1. rviz, urdf, world 등 각종 파일 경로 수정
+2. 사용될 센서들 추가
+    => 기존 모델.png
+
+    2.1 mount.xacro 추가
+        => mount Gazebo.png
+
+    2.2 velodyne.xacro 추가
+        => velodyne Gazebo, velodyne rviz.png
+
+    2.3 laser.xacro 추가
+        => laser Gazebo, laser rviz.png
+
+    2.4 camera.xacro 추가
+        => laser Gazebo, laser rviz.png
+
+    2.5 depth_camera.xacro 추가
+        => laser Gazebo, laser rviz.png
+
+3. costmap 추가
+4. nav 추가

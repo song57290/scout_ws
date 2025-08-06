@@ -10,10 +10,11 @@
     <xacro:include filename="$(find scout_description)/urdf/scout_mini_wheel_2.xacro" />
     <xacro:include filename="$(find scout_description)/urdf/scout_mini_wheel_3.xacro" />
     <xacro:include filename="$(find scout_description)/urdf/scout_mini_wheel_4.xacro" />
-    <xacro:include filename="$(find scout_description)/urdf/velodyne.xacro"/>       <!-- 3D 라이다를 위한 Velodyne.xacro 추가 -->
-    <xacro:include filename="$(find scout_description)/urdf/laser.xacro"/>          <!-- 2D 스캔을 위한 laser.xacro 추가 -->
-    <xacro:include filename="$(find scout_description)/urdf/camera.xacro"/>         <!-- camera.xacro 추가 -->
-    <xacro:include filename="$(find scout_description)/urdf/depth_camera.xacro"/>   <!-- depth_camera 추가 -->
+    <xacro:include filename="$(find scout_description)/urdf/mount.xacro" />
+    <!-- <xacro:include filename="$(find scout_description)/urdf/velodyne.xacro"/>       3D 라이다를 위한 Velodyne.xacro 추가 -->
+    <!-- <xacro:include filename="$(find scout_description)/urdf/laser.xacro"/>          2D 스캔을 위한 laser.xacro 추가 -->
+    <!-- <xacro:include filename="$(find scout_description)/urdf/camera.xacro"/>         camera.xacro 추가 -->
+    <!-- <xacro:include filename="$(find scout_description)/urdf/depth_camera.xacro"/>   depth_camera 추가 -->
 
     <!-- Variables -->
     <xacro:property name="M_PI" value="3.14159"/>
@@ -112,6 +113,8 @@
     </xacro:scout_mini_wheel_4>
 
     <!--  base_footprint frame  -->
+    <!-- front_laser -> base_footprint 변환 관련 TF 오류 수정용 -->
+    <!-- Couldn't transform from front_laser to base_footprint … -->
     <link name="base_footprint"/>
         <joint name="base_footprint_joint" type="fixed">
         <parent link="base_link"/>

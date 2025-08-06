@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- 기본 parent_link (외부에서 덮어쓰면 그대로 사용) -->
+  <xacro:property name="parent_link" value="base_link"/>
+
+  <!-- 사용자 파라미터  -->
+  <xacro:property name="tilt_mul"    value="1.6"/>    <!-- 기둥 경사 배수 -->
+  <xacro:property name="beam_extra"  value="0.0"/>  <!-- 기둥 길이 여유 -->
+
+  <!-- 바닥 / 윗판 “앵커” 크기(기둥 자동계산용) -->
+  <xacro:property name="len_x_bot" value="0.13"/>
+  <xacro:property name="len_y_bot" value="0.155"/>
+  <xacro:property name="len_x_top" value="0.08"/>
+  <xacro:property name="len_y_top" value="0.08"/>
+
+  <!-- 실제 보이는 윗판(box) 크기 & 두께 -->
+  <xacro:property name="plate_x"  value="0.10"/>
+  <xacro:property name="plate_y"  value="0.10"/>
+  <xacro:property name="th_top"   value="0.015"/>
+
+  <!-- 기타 치수 -->
+  <xacro:property name="height"  value="0.12"/>
+  <xacro:property name="beam_r"  value="0.004"/>
+
+  <!-- 전체 오프셋 -->
+  <xacro:property name="mount_x" value="-0.05"/>
+  <xacro:property name="mount_y" value="0.00"/>
+  <xacro:property name="mount_z" value="0.06"/>
+
+  <!-- 절반 길이 -->
+  <xacro:property name="hx_bot" value="${len_x_bot/2}"/>
+  <xacro:property name="hy_bot" value="${len_y_bot/2}"/>
+  <xacro:property name="hx_top" value="${len_x_top/2}"/>
+  <xacro:property name="hy_top" value="${len_y_top/2}"/>
+
+  <!-- 링크 정의 -->
+  <link name="velodyne_mount_link">
+    <inertial>
+      <origin xyz="0 0 ${(height+beam_extra)/2}" rpy="0 0 0"/>
+      <mass value="0.17"/>
+      <inertia ixx="1e-4" ixy="0" ixz="0" iyy="1e-4" iyz="0" izz="1e-4"/>
+    </inertial>
+
+    <!-- 기둥 매크로 -->
+    <xacro:macro name="corner_beam" params="sx sy">
+      <xacro:property name="xb" value="${sx*hx_bot*tilt_mul}"/>
+      <xacro:property name="yb" value="${sy*hy_bot*tilt_mul}"/>
+      <xacro:property name="xt" value="${sx*hx_top}"/>
+      <xacro:property name="yt" value="${sy*hy_top}"/>
+
+      <xacro:property name="xc" value="${(xb+xt)/2}"/>
+      <xacro:property name="yc" value="${(yb+yt)/2}"/>
+      <xacro:property name="zc" value="${(height+beam_extra)/2}"/>
+
+      <xacro:property name="dx" value="${xt-xb}"/>
+      <xacro:property name="dy" value="${yt-yb}"/>
+      <xacro:property name="horiz" value="${math.sqrt(dx*dx + dy*dy)}"/>
+      <xacro:property name="len_beam"
+        value="${math.sqrt(dx*dx + dy*dy + (height+beam_extra)*(height+beam_extra))}"/>
+      <xacro:property name="yaw_b"   value="${math.atan2(dy, dx)}"/>
+      <xacro:property name="pitch_b" value="${math.atan2(horiz, height+beam_extra)}"/>
+
+      <visual>
+        <origin xyz="${xc} ${yc} ${zc}" rpy="0 ${pitch_b} ${yaw_b}"/>
+        <geometry><cylinder length="${len_beam}" radius="${beam_r}"/></geometry>
+        <material name="Grey"><color rgba="0.5 0.5 0.5 1"/></material>
+      </visual>
+      <collision>
+        <origin xyz="${xc} ${yc} ${zc}" rpy="0 ${pitch_b} ${yaw_b}"/>
+        <geometry><cylinder length="${len_beam}" radius="${beam_r}"/></geometry>
+      </collision>
+    </xacro:macro>
+
+    <!-- 네 기둥 -->
+    <xacro:corner_beam sx=" 1" sy=" 1"/>
+    <xacro:corner_beam sx=" 1" sy="-1"/>
+    <xacro:corner_beam sx="-1" sy=" 1"/>
+    <xacro:corner_beam sx="-1" sy="-1"/>
+
+    <!-- 윗판 (아랫면 위치는 그대로, 두께만 위로) -->
+    <visual>
+      <origin xyz="0 0 ${height+beam_extra + th_top/2}" rpy="0 0 0"/>
+      <geometry><box size="${plate_x} ${plate_y} ${th_top}"/></geometry>
+      <material name="DarkGrey"><color rgba="0.4 0.4 0.4 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${height+beam_extra + th_top/2}"/>
+      <geometry><box size="${plate_x} ${plate_y} ${th_top}"/></geometry>
+    </collision>
+  </link>
+
+  <!-- 링크 전체를 회색으로 렌더 -->
+  <gazebo reference="velodyne_mount_link">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+
+  <!-- base_link 와 고정 -->
+  <joint name="velodyne_mount_joint" type="fixed">
+    <parent link="${parent_link}"/>
+    <child  link="velodyne_mount_link"/>
+    <origin xyz="${mount_x} ${mount_y} ${mount_z}" rpy="0 0 0"/>
+  </joint>
+
+</robot>
