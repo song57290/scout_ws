@@ -10,10 +10,10 @@
     <xacro:include filename="$(find scout_description)/urdf/scout_mini_wheel_2.xacro" />
     <xacro:include filename="$(find scout_description)/urdf/scout_mini_wheel_3.xacro" />
     <xacro:include filename="$(find scout_description)/urdf/scout_mini_wheel_4.xacro" />
-    <xacro:include filename="$(find scout_description)/urdf/velodyne.xacro"/>
-    <xacro:include filename="$(find scout_description)/urdf/laser.xacro"/>
-    <xacro:include filename="$(find scout_description)/urdf/camera.xacro"/>
-    <xacro:include filename="$(find scout_description)/urdf/depth_camera.xacro"/>
+    <xacro:include filename="$(find scout_description)/urdf/velodyne.xacro"/>       <!-- 3D 라이다를 위한 Velodyne.xacro 추가 -->
+    <xacro:include filename="$(find scout_description)/urdf/laser.xacro"/>          <!-- 2D 스캔을 위한 laser.xacro 추가 -->
+    <xacro:include filename="$(find scout_description)/urdf/camera.xacro"/>         <!-- camera.xacro 추가 -->
+    <xacro:include filename="$(find scout_description)/urdf/depth_camera.xacro"/>   <!-- depth_camera 추가 -->
 
     <!-- Variables -->
     <xacro:property name="M_PI" value="3.14159"/>
@@ -110,6 +110,14 @@
            rpy="0 0 0" />-->
         <origin xyz="${-wheelbase/2} ${-track/2} ${wheel_vertical_offset+0.001}" rpy="1.57 0 0" />
     </xacro:scout_mini_wheel_4>
+
+    <!--  base_footprint frame  -->
+    <link name="base_footprint"/>
+        <joint name="base_footprint_joint" type="fixed">
+        <parent link="base_link"/>
+        <child  link="base_footprint"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
 
     <!-- Additional definitions -->
     <xacro:include filename="$(arg urdf_extras)" />
