@@ -20,9 +20,10 @@
       <geometry>
         <box size="0.02 0.1 0.007"/>
       </geometry>
-      <material name="blue">
-        <color rgba="0 0 0.8 1"/>
+      <material name="red">
+        <color rgba="1 0 0 1"/>
       </material>
+
     </visual>
 
     <collision>
@@ -34,7 +35,7 @@
 
   <!-- Gazebo 센서 및 재질 정의 -->
   <gazebo reference="camera_link">
-    <material>Gazebo/Blue</material>
+    <material>Gazebo/Red</material>
 
     <sensor name="color_camera" type="camera">
       <camera>
