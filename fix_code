@@ -18,4 +18,12 @@
         => depth_camera_Gazebo, depth_camera_Rviz(1),(2).png
 
 3. costmap 추가
-4. nav 추가
+    => costmap.png + costmap.webm
+
+4. Rviz 초기위치 수정
+    => nav2_params.yaml 수정  (initial_pose: [0.0, 1.0, 0.0, 0.0] => initial_pose: {x: 0.0, y: 1.0, z: 0.0, yaw: 0.0})
+    => initial_pose.png + initial_pose.webm
+        
+5. nav 추가
+    => nav2.webm
+    
