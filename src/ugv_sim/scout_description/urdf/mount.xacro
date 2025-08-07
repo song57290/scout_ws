@@ -15,12 +15,12 @@
   <xacro:property name="len_y_top" value="0.08"/>
 
   <!-- 실제 보이는 윗판(box) 크기 & 두께 -->
-  <xacro:property name="plate_x"  value="0.10"/>
-  <xacro:property name="plate_y"  value="0.10"/>
+  <xacro:property name="plate_x"  value="0.15"/>
+  <xacro:property name="plate_y"  value="0.15"/>
   <xacro:property name="th_top"   value="0.015"/>
 
   <!-- 기타 치수 -->
-  <xacro:property name="height"  value="0.12"/>
+  <xacro:property name="height"  value="0.13"/>
   <xacro:property name="beam_r"  value="0.004"/>
 
   <!-- 전체 오프셋 -->

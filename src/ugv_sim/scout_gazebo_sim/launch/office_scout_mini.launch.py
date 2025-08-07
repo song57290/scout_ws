@@ -29,7 +29,8 @@ def generate_launch_description() -> LaunchDescription:
 
     map_yaml_default    = os.path.join(nav_share, "maps/office_world/office_world.yaml")
     nav2_params_default = os.path.join(nav_share, "params/office_world/nav2_params.yaml")
-    rviz_config_default = os.path.join(nav_share, "rviz/office_nav2_config.rviz")
+    # rviz_config_default = os.path.join(nav_share, "rviz/office_nav2_config.rviz")
+    rviz_config_default = os.path.join(nav_share, "rviz/basic.rviz")
 
     # Gazebo 모델 경로 환경변수
     os.environ["GAZEBO_MODEL_PATH"] = os.path.join(gazebo_share, "models")

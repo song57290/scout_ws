@@ -3,19 +3,19 @@
     => 기존 모델.png
 
     2.1 mount.xacro 추가
-        => mount Gazebo.png
+        => mount_Gazebo.png
 
     2.2 velodyne.xacro 추가
-        => velodyne Gazebo, velodyne rviz.png
+        => velodyne_Gazebo, velodyne_Rviz.png
 
     2.3 laser.xacro 추가
-        => laser Gazebo, laser rviz.png
+        => laser_Gazebo, laser_Rviz.png
 
     2.4 camera.xacro 추가
-        => laser Gazebo, laser rviz.png
+        => camera_Gazebo, camera_Rviz.png
 
     2.5 depth_camera.xacro 추가
-        => laser Gazebo, laser rviz.png
+        => depth_camera_Gazebo, depth_camera_Rviz.png
 
 3. costmap 추가
 4. nav 추가
