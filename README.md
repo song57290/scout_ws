@@ -21,14 +21,22 @@ ros2 launch scout_gazebo_sim office_scout_mini.launch.py
 ```
 ---
 
-## 2. 키보드 제어
+## 2. 조이스틱 제어
+---
+```bash
+cd ~/Downloads/ETRI_7004_UI_
+npm start
+```
+---
+
+## 3. 키보드 제어
 ---
 ```bash
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 ---
 
-# 3. gzserver & gzclient 확인
+# 4. gzserver & gzclient 확인
 ---
 ```bash
 ps faux | grep gzclient

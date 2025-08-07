@@ -160,6 +160,26 @@ def generate_launch_description() -> LaunchDescription:
         output="screen",
     )
 
+    # rosbridge: 웹소켓 통신 (MapVisualizer 등 웹 클라이언트 연동용)
+    rosbridge = Node(
+        package='rosbridge_server',
+        executable='rosbridge_websocket',
+        name='rosbridge_websocket',
+        output='screen'
+    )
+
+    # web_video_server: 로봇 카메라 스트리밍 (브라우저 MJPEG 전송용)
+    web_video = Node(
+        package='web_video_server',
+        executable='web_video_server',
+        name='web_video_server',
+        output='screen',
+        parameters=[{
+            'ros_topic': '/depth_camera/image_raw',
+            'image_transport': 'compressed'
+        }]
+    )
+
     # LaunchDescription 조립
     ld = LaunchDescription()
 
@@ -185,5 +205,7 @@ def generate_launch_description() -> LaunchDescription:
     ld.add_action(nav2_bringup)
     ld.add_action(rviz_node)
     ld.add_action(dock_navigator)
+    ld.add_action(rosbridge)
+    ld.add_action(web_video)
 
     return ld
