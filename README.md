@@ -29,12 +29,27 @@ npm start
 ```
 ---
 
-## 3. 키보드 제어
+## 3. 시뮬레이션 환경을 열고 토픽을 확인합니다. 또한 토픽의 타입이 sensor_msgs/msg/Image인지 확인합니다.
+
+# Terminal 1
+은 그냥 scout_mini 실행시키면 됨
+
+# Terminal 2
+``` bash
+ros2 topic list
+```
+
+/depth_camera/image_raw 등 이름을 확인하고 
+```bash
+ros2 topic info /depth_camera/image_raw
+```
+Type: sensor_msgs/msg/Image 등 확인
+---
+
 ---
 ```bash
-ros2 run teleop_twist_keyboard teleop_twist_keyboard
+ros2 launch yolov8_bringup yolov8.launch.py device:=cpu
 ```
----
 
 ## 4. gzserver & gzclient 확인
 ---
@@ -68,25 +83,6 @@ colcon build --symlink-install --packages-up-to yolov8_bringup
 ```
 ---
 
-## 2. 시뮬레이션 환경을 열고 토픽을 확인합니다. 또한 토픽의 타입이 sensor_msgs/msg/Image인지 확인합니다.
-
-# Terminal 1
-은 그냥 scout_mini 실행시키면 됨
-
-# Terminal 2
-``` bash
-ros2 topic list
-```
-
-/depth_camera/image_raw 등 이름을 확인하고 
-```bash
-ros2 topic info /depth_camera/image_raw
-```
-Type: sensor_msgs/msg/Image 등 확인
----
-
----
-```bash
-ros2 launch yolov8_bringup yolov8.launch.py device:=cpu
-```
----
+go2 부분 urdf도 확인
+-> urdf
+-> 초기위치 => params.yaml

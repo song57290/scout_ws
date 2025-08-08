@@ -127,6 +127,7 @@ Reference:
     <plugin name='diff_drive' filename='libgazebo_ros_diff_drive.so'>
           <ros>
             <namespace>/</namespace>
+            <argument>use_sim_time:=true</argument> <!-- use_sim_time을 맞춰주기 위함 -->
             <remapping>cmd_vel:=cmd_vel</remapping>
             <remapping>odom:=odom</remapping>
           </ros>

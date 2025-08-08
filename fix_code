@@ -21,7 +21,7 @@
     => costmap.png + costmap.webm
 
 4. Rviz 초기위치 수정
-    => nav2_params.yaml 수정  (initial_pose: [0.0, 1.0, 0.0, 0.0] => initial_pose: {x: 0.0, y: 1.0, z: 0.0, yaw: 0.0})
+    => nav2_params.yaml 수정  (initial_pose: [0.0, 1.0, 0.0, 0] => initial_pose: {x: 0.0, y: 1.0, z: 0.0, yaw: 1.5708})
     => initial_pose.png + initial_pose.webm
         
 5. nav 추가
@@ -38,3 +38,9 @@
 7. 객체 탐지를 위한 Yolo 적용
     => yolov8.launch.py 의 이미지 토픽 변경
     => Yolo.png
+
+
+
+에러 수정
+
+    => scout_mini.gazebo 코드 use_sim_time 추가
