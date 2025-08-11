@@ -43,8 +43,8 @@ source ~/scout_ws/install/setup.bash
 ```
 
 ```bash
-cd src/ugv_sim/scout_yolo/scripts/
-python ros_recognition_yolo.py
+cd src/ugv_sim/scout_yolov5/scripts/
+python yolo_fire_detection.py
 ```
 
 ## 4. gzserver & gzclient 확인
