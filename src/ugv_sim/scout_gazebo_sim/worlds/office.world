@@ -39860,8 +39860,7 @@
       1.5707963267948966
     </pose>
     <uri>model://tv_stand</uri>
-  </include>
-  
+  </include> 
 
 </model>
 
@@ -39901,5 +39900,13 @@
     <pose>0.0 1.0 0.0 0 0 0</pose>
   </include>
 -->
+  <include>
+    <uri>model://fire_extinguisher</uri>
+    <name>fire_extinguisher_1</name>
+    <pose>2 1 0 0 0 0</pose>
+  </include>
+
+
+
   </world>
 </sdf>
