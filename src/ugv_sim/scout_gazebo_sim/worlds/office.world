@@ -39900,11 +39900,63 @@
     <pose>0.0 1.0 0.0 0 0 0</pose>
   </include>
 -->
+
+<!-- 소화기 모델 추가 -->
   <include>
     <uri>model://fire_extinguisher</uri>
-    <name>fire_extinguisher_1</name>
-    <pose>2 1 0 0 0 0</pose>
+    <name>fire_extinguisher</name>
+    <pose>
+    0
+    0.2
+    0
+    0
+    0
+    0
+    </pose>
+  
+  <!-- 불 모델 추가 -->
   </include>
+
+  <include>
+    <uri>model://fire_model</uri>
+    <name>fire_model_1</name>
+    <pose>
+    7.5
+    19.2
+    0
+    0
+    0
+    3.1416
+    </pose>
+  </include>
+  
+  <include>
+    <uri>model://fire_model</uri>
+    <name>fire_model_2</name>
+    <pose>
+    7.5
+    19.2
+    0.9
+    0
+    0
+    3.1416
+    </pose>
+  </include>
+
+  <include>
+    <uri>model://fire_model</uri>
+    <name>fire_model_3</name>
+    <pose>
+    7.5
+    19.2
+    1.8
+    0
+    0
+    3.1416
+    </pose>
+  </include>
+
+
 
 
 
