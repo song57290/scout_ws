@@ -29,26 +29,22 @@ npm start
 ```
 ---
 
-## 3. 시뮬레이션 환경을 열고 토픽을 확인합니다. 또한 토픽의 타입이 sensor_msgs/msg/Image인지 확인합니다.
+## 3. YOLO v5 실행
 
 # Terminal 1
 은 그냥 scout_mini 실행시키면 됨
 
 # Terminal 2
-``` bash
-ros2 topic list
-```
-
-/depth_camera/image_raw 등 이름을 확인하고 
-```bash
-ros2 topic info /depth_camera/image_raw
-```
-Type: sensor_msgs/msg/Image 등 확인
----
-
 ---
 ```bash
-ros2 launch yolov8_bringup yolov8.launch.py device:=cpu
+cd ~/scout_ws
+colcon build
+source ~/scout_ws/install/setup.bash
+```
+
+```bash
+cd src/ugv_sim/scout_yolo/scripts/
+python ros_recognition_yolo.py
 ```
 
 ## 4. gzserver & gzclient 확인

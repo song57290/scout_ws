@@ -39905,6 +39905,7 @@
   <include>
     <uri>model://fire_extinguisher</uri>
     <name>fire_extinguisher</name>
+    <static>false</static>
     <pose>
     0
     0.2
@@ -39953,6 +39954,19 @@
     0
     0
     3.1416
+    </pose>
+  </include>
+
+  <include>
+    <uri>model://fire_model</uri>
+    <name>fire_model_4</name>
+    <pose>
+    2.0
+    1.0
+    0
+    0
+    0
+    1.8704
     </pose>
   </include>
 
