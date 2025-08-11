@@ -43,9 +43,11 @@
     => 기존은 동쪽을 쳐다보고 있어 북쪽을 쳐다볼 수 있게 수정
     => map.js 수정 전 & 후.png
 
+9. 불 감지를 위한 yolo 모델 추가
+    => scout_yolov5
+    => fire_detection.png
 
 
-    
 
 에러 수정
 
