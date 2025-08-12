@@ -22,7 +22,7 @@
       <visual name="visual">
         <geometry>
           <mesh>
-            <scale>3.5 1 6.5</scale>
+            <scale>3.5 1 4</scale>
             <uri>model://fire_model/meshes/fire2.dae</uri>
           </mesh>
         </geometry>

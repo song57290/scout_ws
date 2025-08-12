@@ -35,7 +35,9 @@
         => Downloads/ETRI_7004_UI/public/controlling/src/clientSet의 clientLoad.js 파일을 통해 접근 경로 수정
         => Downloads/ETRI_7004_UI/public/controlling/src/map의 office_map.js 파일 수정
 
-7. 객체 탐지를 위한 Yolo 적용
+    6.3 화면 송출 Yolo 화면 송출로 변경
+
+7. 객체 탐지를 위한 Yolo 적용 (렉 이슈로 사용 안함)
     => yolov8.launch.py 의 이미지 토픽 변경
     => Yolo.png
 
@@ -48,6 +50,12 @@
     => fire_detection.png
     => fire_detection_twin.png
     => fire_detection_move.webm
+
+    9.1 임계값 0.6이 되면 터미널에 알림 전송
+        => yolo_detection_play.webm
+
+10. 불이 감지되면 소화기로 돌아오게 하는 작업
+
 
 
 에러 수정
