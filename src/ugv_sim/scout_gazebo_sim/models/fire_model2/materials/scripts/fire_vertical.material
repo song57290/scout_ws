@@ -1,0 +1,24 @@
+material fire_model2/object
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 1 1 1
+      diffuse 1 1 1 1
+      specular 0 0 0 1 0
+      lighting on
+
+      cull_hardware none
+      cull_software none
+
+      texture_unit
+      {
+        texture fire_model2.jpg
+        filtering trilinear
+        tex_address_mode clamp
+      }
+    }
+  }
+}
+

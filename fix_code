@@ -46,7 +46,8 @@
 9. 불 감지를 위한 yolo 모델 추가
     => scout_yolov5
     => fire_detection.png
-
+    => fire_detection_twin.png
+    => fire_detection_move.webm
 
 
 에러 수정

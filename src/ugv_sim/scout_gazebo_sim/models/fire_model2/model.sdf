@@ -1,0 +1,50 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="fire_model2">
+    <static>true</static>
+
+    <link name="link">
+      <!-- 충돌(물리) 박스 -->
+      <collision name="collision">
+        <geometry>
+          <box>
+            <!-- X=가로, Y=두께, Z=세로(높이) -->
+            <size>1.0 0.05 2.0</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1.2</mu>
+              <mu2>1.2</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+
+      <!-- 시각(렌더링) 박스 + 텍스처 머티리얼 -->
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>1.0 0.05 2.0</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://fire_model2/materials/scripts</uri>
+            <uri>model://fire_model2/materials/textures</uri>
+            <name>fire_model2/object</name>
+          </script>
+          <!-- 텍스처가 더 밝게 보이도록 기본값들 -->
+          <ambient>1 1 1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+          <specular>0 0 0 1</specular>
+          <emissive>0 0 0 1</emissive>
+        </material>
+        <!-- 필요하면 회전/위치 조정 -->
+        <!-- <pose>0 0 1 0 0 0</pose> -->
+      </visual>
+    </link>
+  </model>
+</sdf>
+

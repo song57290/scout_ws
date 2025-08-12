@@ -21,18 +21,8 @@ ros2 launch scout_gazebo_sim office_scout_mini.launch.py
 ```
 ---
 
-## 2. 조이스틱 제어
----
-```bash
-cd ~/Downloads/ETRI_7004_UI_
-npm start
-```
----
 
-## 3. YOLO v5 실행
-
-# Terminal 1
-은 그냥 scout_mini 실행시키면 됨
+## 2. YOLO v5 실행
 
 # Terminal 2
 ---
@@ -46,6 +36,14 @@ source ~/scout_ws/install/setup.bash
 cd src/ugv_sim/scout_yolov5/scripts/
 python yolo_fire_detection.py
 ```
+
+## 3. 조이스틱 제어
+---
+```bash
+cd ~/Downloads/ETRI_7004_UI_
+npm start
+```
+---
 
 ## 4. gzserver & gzclient 확인
 ---
