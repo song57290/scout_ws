@@ -130,6 +130,20 @@
     <!-- Gazebo definitions  -->
     <xacro:include filename="$(find scout_description)/urdf/scout_mini.gazebo" />
 
-    <xacro:simple_gripper parent_link="base_link" mount_x="0.25" mount_y="0.0" mount_z="-0.08"/>
+    <xacro:scout_mini_gripper parent="base_link" mount_xyz="0.40 0 0.20" opening_max="0.18"/>
+
+    <gazebo>
+        <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+        
+            <robotParam>robot_description</robotParam>
+            <robotParamNode>/robot_state_publisher</robotParamNode>
+
+            <parameters>$(find scout_gazebo_sim)/config/controllers.yaml</parameters>
+            <ros>
+                <namespace>/</namespace>
+            </ros>
+        </plugin>
+    </gazebo>
+
 
 </robot>

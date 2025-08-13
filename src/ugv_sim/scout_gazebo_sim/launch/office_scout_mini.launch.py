@@ -8,7 +8,7 @@ from launch.actions import (
 )
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, Command, PythonExpression
+from launch.substitutions import LaunchConfiguration, Command
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -26,13 +26,12 @@ def generate_launch_description() -> LaunchDescription:
     urdf_xacro_path  = os.path.join(description_share, "urdf/mini.xacro")
     world_file_path  = os.path.join(gazebo_share, "worlds/office.world")
     dock_script_path = os.path.join(gazebo_share, "scripts/scout_navigate.py")
+    controllers_yaml = os.path.join(gazebo_share, "config/controllers.yaml")  # gripper 컨트롤러 설정 파일
 
     map_yaml_default    = os.path.join(nav_share, "maps/office_world/office_world.yaml")
     nav2_params_default = os.path.join(nav_share, "params/office_world/nav2_params.yaml")
     rviz_config_default = os.path.join(nav_share, "rviz/office_nav2_config.rviz")
     # rviz_config_default = os.path.join(nav_share, "rviz/basic.rviz")
-
-
 
     # Gazebo 모델 경로 환경변수
     os.environ["GAZEBO_MODEL_PATH"] = os.path.join(gazebo_share, "models")
@@ -116,7 +115,7 @@ def generate_launch_description() -> LaunchDescription:
         condition=IfCondition(gui),
     )
 
-    # Spawn Entity (3 s delay)
+    # Spawn Entity (3 s delay)
     spawn_entity = Node(
         package="gazebo_ros",
         executable="spawn_entity.py",
@@ -131,7 +130,25 @@ def generate_launch_description() -> LaunchDescription:
         output="screen",
     )
 
-    # Nav2 Bring‑up
+    # gripper와 joint state 브로드캐스터 컨트롤러 스포너
+    entity_name = "scout_mini"
+    manager_ns  = "/controller_manager"
+
+    spawner_js = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["joint_state_broadcaster", "--controller-manager", manager_ns],
+        output="screen",
+    )
+
+    spawner_grip = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["gripper_controller", "--controller-manager", manager_ns, "--param-file", controllers_yaml],
+        output="screen",
+    )
+
+    # Nav2 Bring-up
     nav2_bringup = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(FindPackageShare("nav2_bringup").find("nav2_bringup"), "launch/bringup_launch.py")
@@ -183,7 +200,7 @@ def generate_launch_description() -> LaunchDescription:
     # LaunchDescription 조립
     ld = LaunchDescription()
 
-    # Declare arguments (개별 추가)
+    # Declare arguments (개별 추가)
     ld.add_action(declare_use_sim_time)
     ld.add_action(declare_gui)
     ld.add_action(declare_spawn_x)
@@ -202,6 +219,8 @@ def generate_launch_description() -> LaunchDescription:
     ld.add_action(robot_state_pub)
     ld.add_action(joint_state_gui)
     ld.add_action(TimerAction(period=3.0, actions=[spawn_entity]))
+    ld.add_action(TimerAction(period=8.0, actions=[spawner_js]))
+    ld.add_action(TimerAction(period=9.0, actions=[spawner_grip]))
     ld.add_action(nav2_bringup)
     ld.add_action(rviz_node)
     ld.add_action(dock_navigator)

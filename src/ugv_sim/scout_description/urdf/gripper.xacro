@@ -1,155 +1,131 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="gripper" xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <xacro:property name="parent_link" value="base_link"/>
-  <xacro:property name="mount_x" value="0.0"/>
-  <xacro:property name="mount_y" value="0.0"/>
-  <xacro:property name="mount_z" value="2.0"/>
-  <xacro:property name="mount_roll" value="0.0"/>
-  <xacro:property name="mount_pitch" value="0.0"/>
-  <xacro:property name="mount_yaw" value="0.0"/>
+  <xacro:macro name="scout_mini_gripper"
+               params="
+                 parent:=base_link
+                 mount_xyz:='0.40 0 0.20'
+                 mount_rpy:='0 0 0'
+                 jaw_length:=0.16
+                 jaw_thickness:=0.02
+                 jaw_height:=0.05
+                 frame_width:=0.28
+                 opening_max:=0.16
+                 density:=7800">
 
-  <xacro:macro name="simple_gripper" params="parent_link:=${parent_link} mount_x:=${mount_x} mount_y:=${mount_y} mount_z:=${mount_z} mount_roll:=${mount_roll} mount_pitch:=${mount_pitch} mount_yaw:=${mount_yaw}">
-
-    <link name="riser">
+    <xacro:macro name="gr_inertial_box" params="x y z rho">
       <inertial>
+        <mass value="${rho * x * y * z}"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="10.0"/>
-        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+        <inertia ixx="${(1.0/12.0)*rho*x*y*z*(y*y+z*z)}"
+                 ixy="0" ixz="0"
+                 iyy="${(1.0/12.0)*rho*x*y*z*(x*x+z*z)}"
+                 iyz="0"
+                 izz="${(1.0/12.0)*rho*x*y*z*(x*x+y*y)}"/>
       </inertial>
-      <visual><geometry><box size="0.03 0.03 0.05"/></geometry></visual>
+    </xacro:macro>
+
+    <link name="gripper_base">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry><box size="0.08 0.30 0.06"/></geometry>
+        <material name="Gray"><color rgba="0.5 0.5 0.5 1.0"/></material>
+      </visual>
       <collision>
-        <geometry><box size="0.03 0.03 0.05"/></geometry>
-        <surface>
-          <friction><ode><mu>1.2</mu><mu2>1.2</mu2></ode></friction>
-          <contact><ode><kp>1e6</kp><kd>1.0</kd><min_depth>0.001</min_depth></ode></contact>
-        </surface>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry><box size="0.08 0.30 0.06"/></geometry>
       </collision>
+      <xacro:gr_inertial_box x="0.08" y="0.30" z="0.06" rho="${density}"/>
     </link>
 
-    <joint name="riser_fix" type="fixed">
-      <parent link="${parent_link}"/>
-      <child link="riser"/>
-      <origin xyz="${mount_x - 0.15} ${mount_y + 0.0} ${mount_z + 0.0}" rpy="${mount_roll} ${mount_pitch} ${mount_yaw}"/>
-    </joint>
-
-    <link name="palm">
-      <inertial>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="0.5"/>
-        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
-      </inertial>
-      <visual><geometry><box size="0.25 0.05 0.025"/></geometry></visual>
-      <collision>
-        <geometry><box size="0.25 0.05 0.025"/></geometry>
-        <surface>
-          <friction><ode><mu>1.2</mu><mu2>1.2</mu2></ode></friction>
-          <contact><ode><kp>1e6</kp><kd>1.0</kd><min_depth>0.001</min_depth></ode></contact>
-        </surface>
-      </collision>
-    </link>
-
-    <joint name="palm_fix" type="fixed">
-      <parent link="${parent_link}"/>
-      <child link="palm"/>
-      <origin xyz="${mount_x - 0.04} ${mount_y + 0.0} ${mount_z - 0.02}" rpy="${mount_roll} ${mount_pitch} ${mount_yaw}"/>
+    <joint name="gripper_mount_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="gripper_base"/>
+      <origin xyz="${mount_xyz}" rpy="${mount_rpy}"/>
     </joint>
 
     <link name="left_finger">
-      <inertial>
+      <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="0.1"/>
-        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
-      </inertial>
-      <visual><geometry><box size="0.05 0.15 0.025"/></geometry></visual>
+        <geometry><box size="${jaw_length} ${jaw_thickness} ${jaw_height}"/></geometry>
+        <material name="Black"><color rgba="0.1 0.1 0.1 1.0"/></material>
+      </visual>
       <collision>
-        <geometry><box size="0.05 0.15 0.025"/></geometry>
-        <surface>
-          <friction><ode><mu>1.2</mu><mu2>1.2</mu2></ode></friction>
-          <contact><ode><kp>1e6</kp><kd>1.0</kd><min_depth>0.001</min_depth></ode></contact>
-        </surface>
-      </collision>
-    </link>
-
-    <joint name="left_finger_fix" type="fixed">
-      <parent link="${parent_link}"/>
-      <child link="left_finger"/>
-      <origin xyz="${mount_x + 0.1} ${mount_y + 0.08} ${mount_z - 0.02}" rpy="0 0 -0.78539"/>
-    </joint>
-
-    <link name="left_finger_tip">
-      <inertial>
         <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="0.1"/>
-        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
-      </inertial>
-      <visual><geometry><box size="0.05 0.15 0.025"/></geometry></visual>
-      <collision>
-        <geometry><box size="0.05 0.15 0.025"/></geometry>
-        <surface>
-          <friction><ode><mu>1.2</mu><mu2>1.2</mu2></ode></friction>
-          <contact><ode><kp>1e6</kp><kd>1.0</kd><min_depth>0.001</min_depth></ode></contact>
-        </surface>
+        <geometry><box size="${jaw_length} ${jaw_thickness} ${jaw_height}"/></geometry>
       </collision>
+      <xacro:gr_inertial_box x="${jaw_length}" y="${jaw_thickness}" z="${jaw_height}" rho="${density}"/>
     </link>
-
-    <joint name="left_finger_tip_fix" type="fixed">
-      <parent link="${parent_link}"/>
-      <child link="left_finger_tip"/>
-      <origin xyz="${mount_x + 0.225} ${mount_y + 0.14} ${mount_z - 0.02}" rpy="0 0 1.5707"/>
-    </joint>
 
     <link name="right_finger">
-      <inertial>
+      <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="0.1"/>
-        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
-      </inertial>
-      <visual><geometry><box size="0.05 0.15 0.025"/></geometry></visual>
+        <geometry><box size="${jaw_length} ${jaw_thickness} ${jaw_height}"/></geometry>
+        <material name="Black2"><color rgba="0.2 0.2 0.2 1.0"/></material>
+      </visual>
       <collision>
-        <geometry><box size="0.05 0.15 0.025"/></geometry>
-        <surface>
-          <friction><ode><mu>1.2</mu><mu2>1.2</mu2></ode></friction>
-          <contact><ode><kp>1e6</kp><kd>1.0</kd><min_depth>0.001</min_depth></ode></contact>
-        </surface>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry><box size="${jaw_length} ${jaw_thickness} ${jaw_height}"/></geometry>
       </collision>
+      <xacro:gr_inertial_box x="${jaw_length}" y="${jaw_thickness}" z="${jaw_height}" rho="${density}"/>
     </link>
 
-    <joint name="right_finger_fix" type="fixed">
-      <parent link="${parent_link}"/>
+    <link name="u_frame_bar_top">
+      <visual>
+        <origin xyz="0.02 0 ${0.5*jaw_height+0.02}"/>
+        <geometry><box size="0.04 ${frame_width} 0.02"/></geometry>
+        <material name="Gray2"><color rgba="0.6 0.6 0.6 1.0"/></material>
+      </visual>
+      <collision>
+        <origin xyz="0.02 0 ${0.5*jaw_height+0.02}"/>
+        <geometry><box size="0.04 ${frame_width} 0.02"/></geometry>
+      </collision>
+      <xacro:gr_inertial_box x="0.04" y="${frame_width}" z="0.02" rho="${density}"/>
+    </link>
+
+    <joint name="u_frame_top_fix" type="fixed">
+      <parent link="gripper_base"/>
+      <child link="u_frame_bar_top"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="left_finger_joint" type="prismatic">
+      <parent link="gripper_base"/>
+      <child link="left_finger"/>
+      <origin xyz="0.04 ${0.5*frame_width - 0.5*jaw_thickness} 0.0" rpy="0 0 0"/>
+      <axis xyz="0 -1 0"/>
+      <limit lower="0.0" upper="${0.5*opening_max}" effort="200" velocity="0.3"/>
+      <dynamics damping="2.0" friction="0.1"/>
+    </joint>
+
+    <joint name="right_finger_joint" type="prismatic">
+      <parent link="gripper_base"/>
       <child link="right_finger"/>
-      <origin xyz="${mount_x + 0.1} ${mount_y - 0.08} ${mount_z - 0.02}" rpy="0 0 0.78539"/>
+      <origin xyz="0.04 ${-0.5*frame_width + 0.5*jaw_thickness} 0.0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit lower="0.0" upper="${0.5*opening_max}" effort="200" velocity="0.3"/>
+      <dynamics damping="2.0" friction="0.1"/>
     </joint>
 
-    <link name="right_finger_tip">
-      <inertial>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="0.1"/>
-        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
-      </inertial>
-      <visual><geometry><box size="0.05 0.15 0.025"/></geometry></visual>
-      <collision>
-        <geometry><box size="0.05 0.15 0.025"/></geometry>
-        <surface>
-          <friction><ode><mu>1.2</mu><mu2>1.2</mu2></ode></friction>
-          <contact><ode><kp>1e6</kp><kd>1.0</kd><min_depth>0.001</min_depth></ode></contact>
-        </surface>
-      </collision>
-    </link>
+    <gazebo reference="gripper_base"><kp>20000</kp><kd>50</kd></gazebo>
+    <gazebo reference="left_finger"><mu1>1.0</mu1><mu2>1.0</mu2></gazebo>
+    <gazebo reference="right_finger"><mu1>1.0</mu1><mu2>1.0</mu2></gazebo>
 
-    <joint name="right_finger_tip_fix" type="fixed">
-      <parent link="${parent_link}"/>
-      <child link="right_finger_tip"/>
-      <origin xyz="${mount_x + 0.225} ${mount_y - 0.14} ${mount_z - 0.02}" rpy="0 0 1.5707"/>
-    </joint>
-
-    <gazebo reference="riser"><selfCollide>false</selfCollide><material>Gazebo/Grey</material></gazebo>
-    <gazebo reference="palm"><selfCollide>false</selfCollide><material>Gazebo/Grey</material></gazebo>
-    <gazebo reference="left_finger"><selfCollide>false</selfCollide><material>Gazebo/Grey</material></gazebo>
-    <gazebo reference="left_finger_tip"><selfCollide>false</selfCollide><material>Gazebo/Grey</material></gazebo>
-    <gazebo reference="right_finger"><selfCollide>false</selfCollide><material>Gazebo/Grey</material></gazebo>
-    <gazebo reference="right_finger_tip"><selfCollide>false</selfCollide><material>Gazebo/Grey</material></gazebo>
+    <ros2_control name="gripper_ros2_control" type="system">
+      <hardware><plugin>gazebo_ros2_control/GazeboSystem</plugin></hardware>
+      <joint name="left_finger_joint">
+        <command_interface name="position"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+      <joint name="right_finger_joint">
+        <command_interface name="position"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+    </ros2_control>
 
   </xacro:macro>
-
 </robot>
