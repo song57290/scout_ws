@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="parent_link" value="base_link"/>
+  <xacro:property name="mount_x" value="0.0"/>
+  <xacro:property name="mount_y" value="0.0"/>
+  <xacro:property name="mount_z" value="2.0"/>
+  <xacro:property name="mount_roll" value="0.0"/>
+  <xacro:property name="mount_pitch" value="0.0"/>
+  <xacro:property name="mount_yaw" value="0.0"/>
+
+  <xacro:macro name="simple_gripper" params="parent_link:=${parent_link} mount_x:=${mount_x} mount_y:=${mount_y} mount_z:=${mount_z} mount_roll:=${mount_roll} mount_pitch:=${mount_pitch} mount_yaw:=${mount_yaw}">
+
+    <link name="riser">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="10.0"/>
+        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+      </inertial>
+      <visual><geometry><box size="0.03 0.03 0.05"/></geometry></visual>
+      <collision>
+        <geometry><box size="0.03 0.03 0.05"/></geometry>
+        <surface>
+          <friction><ode><mu>1.2</mu><mu2>1.2</mu2></ode></friction>
+          <contact><ode><kp>1e6</kp><kd>1.0</kd><min_depth>0.001</min_depth></ode></contact>
+        </surface>
+      </collision>
+    </link>
+
+    <joint name="riser_fix" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="riser"/>
+      <origin xyz="${mount_x - 0.15} ${mount_y + 0.0} ${mount_z + 0.0}" rpy="${mount_roll} ${mount_pitch} ${mount_yaw}"/>
+    </joint>
+
+    <link name="palm">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.5"/>
+        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+      </inertial>
+      <visual><geometry><box size="0.25 0.05 0.025"/></geometry></visual>
+      <collision>
+        <geometry><box size="0.25 0.05 0.025"/></geometry>
+        <surface>
+          <friction><ode><mu>1.2</mu><mu2>1.2</mu2></ode></friction>
+          <contact><ode><kp>1e6</kp><kd>1.0</kd><min_depth>0.001</min_depth></ode></contact>
+        </surface>
+      </collision>
+    </link>
+
+    <joint name="palm_fix" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="palm"/>
+      <origin xyz="${mount_x - 0.04} ${mount_y + 0.0} ${mount_z - 0.02}" rpy="${mount_roll} ${mount_pitch} ${mount_yaw}"/>
+    </joint>
+
+    <link name="left_finger">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.1"/>
+        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+      </inertial>
+      <visual><geometry><box size="0.05 0.15 0.025"/></geometry></visual>
+      <collision>
+        <geometry><box size="0.05 0.15 0.025"/></geometry>
+        <surface>
+          <friction><ode><mu>1.2</mu><mu2>1.2</mu2></ode></friction>
+          <contact><ode><kp>1e6</kp><kd>1.0</kd><min_depth>0.001</min_depth></ode></contact>
+        </surface>
+      </collision>
+    </link>
+
+    <joint name="left_finger_fix" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="left_finger"/>
+      <origin xyz="${mount_x + 0.1} ${mount_y + 0.08} ${mount_z - 0.02}" rpy="0 0 -0.78539"/>
+    </joint>
+
+    <link name="left_finger_tip">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.1"/>
+        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+      </inertial>
+      <visual><geometry><box size="0.05 0.15 0.025"/></geometry></visual>
+      <collision>
+        <geometry><box size="0.05 0.15 0.025"/></geometry>
+        <surface>
+          <friction><ode><mu>1.2</mu><mu2>1.2</mu2></ode></friction>
+          <contact><ode><kp>1e6</kp><kd>1.0</kd><min_depth>0.001</min_depth></ode></contact>
+        </surface>
+      </collision>
+    </link>
+
+    <joint name="left_finger_tip_fix" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="left_finger_tip"/>
+      <origin xyz="${mount_x + 0.225} ${mount_y + 0.14} ${mount_z - 0.02}" rpy="0 0 1.5707"/>
+    </joint>
+
+    <link name="right_finger">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.1"/>
+        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+      </inertial>
+      <visual><geometry><box size="0.05 0.15 0.025"/></geometry></visual>
+      <collision>
+        <geometry><box size="0.05 0.15 0.025"/></geometry>
+        <surface>
+          <friction><ode><mu>1.2</mu><mu2>1.2</mu2></ode></friction>
+          <contact><ode><kp>1e6</kp><kd>1.0</kd><min_depth>0.001</min_depth></ode></contact>
+        </surface>
+      </collision>
+    </link>
+
+    <joint name="right_finger_fix" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="right_finger"/>
+      <origin xyz="${mount_x + 0.1} ${mount_y - 0.08} ${mount_z - 0.02}" rpy="0 0 0.78539"/>
+    </joint>
+
+    <link name="right_finger_tip">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.1"/>
+        <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+      </inertial>
+      <visual><geometry><box size="0.05 0.15 0.025"/></geometry></visual>
+      <collision>
+        <geometry><box size="0.05 0.15 0.025"/></geometry>
+        <surface>
+          <friction><ode><mu>1.2</mu><mu2>1.2</mu2></ode></friction>
+          <contact><ode><kp>1e6</kp><kd>1.0</kd><min_depth>0.001</min_depth></ode></contact>
+        </surface>
+      </collision>
+    </link>
+
+    <joint name="right_finger_tip_fix" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="right_finger_tip"/>
+      <origin xyz="${mount_x + 0.225} ${mount_y - 0.14} ${mount_z - 0.02}" rpy="0 0 1.5707"/>
+    </joint>
+
+    <gazebo reference="riser"><selfCollide>false</selfCollide><material>Gazebo/Grey</material></gazebo>
+    <gazebo reference="palm"><selfCollide>false</selfCollide><material>Gazebo/Grey</material></gazebo>
+    <gazebo reference="left_finger"><selfCollide>false</selfCollide><material>Gazebo/Grey</material></gazebo>
+    <gazebo reference="left_finger_tip"><selfCollide>false</selfCollide><material>Gazebo/Grey</material></gazebo>
+    <gazebo reference="right_finger"><selfCollide>false</selfCollide><material>Gazebo/Grey</material></gazebo>
+    <gazebo reference="right_finger_tip"><selfCollide>false</selfCollide><material>Gazebo/Grey</material></gazebo>
+
+  </xacro:macro>
+
+</robot>

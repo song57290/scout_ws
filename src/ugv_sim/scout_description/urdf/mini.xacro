@@ -16,7 +16,7 @@
     <xacro:include filename="$(find scout_description)/urdf/camera.xacro"/>         <!-- camera.xacro 추가 -->
     <xacro:include filename="$(find scout_description)/urdf/depth_camera.xacro"/>   <!-- depth_camera 추가 -->
     <!-- <xacro:include filename="$(find scout_description)/urdf/double_camera.xacro"/>   camera + depth camera 추가 -->
-
+    <xacro:include filename="$(find scout_description)/urdf/gripper.xacro"/>   <!-- gripper 추가 -->
 
     <!-- Variables -->
     <xacro:property name="M_PI" value="3.14159"/>
@@ -129,4 +129,7 @@
 
     <!-- Gazebo definitions  -->
     <xacro:include filename="$(find scout_description)/urdf/scout_mini.gazebo" />
+
+    <xacro:simple_gripper parent_link="base_link" mount_x="0.25" mount_y="0.0" mount_z="-0.08"/>
+
 </robot>
