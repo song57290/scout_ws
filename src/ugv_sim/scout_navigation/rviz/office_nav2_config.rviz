@@ -69,7 +69,15 @@ Visualization Manager:
           Value: true
         front_right_wheel_link:
           Value: true
+        gripper_arm:
+          Value: true
+        gripper_base:
+          Value: true
+        gripper_connecter:
+          Value: true
         inertial_link:
+          Value: true
+        left_finger:
           Value: true
         map:
           Value: true
@@ -78,6 +86,8 @@ Visualization Manager:
         rear_left_wheel_link:
           Value: true
         rear_right_wheel_link:
+          Value: true
+        right_finger:
           Value: true
         velodyne:
           Value: true
@@ -100,6 +110,13 @@ Visualization Manager:
                 {}
               front_right_wheel_link:
                 {}
+              gripper_connecter:
+                gripper_arm:
+                  gripper_base:
+                    left_finger:
+                      {}
+                    right_finger:
+                      {}
               inertial_link:
                 {}
               rear_left_wheel_link:
@@ -356,16 +373,41 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        gripper_arm:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        gripper_base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        gripper_connecter:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         inertial_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+        left_finger:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         rear_left_wheel_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
         rear_right_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        right_finger:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -405,7 +447,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Best Effort
-        Value: /camera/image_raw
+        Value: /depth_camera/image_raw
       Value: true
     - Class: rviz_default_plugins/Image
       Enabled: true

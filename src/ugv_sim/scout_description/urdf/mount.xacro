@@ -20,7 +20,7 @@
   <xacro:property name="th_top"   value="0.015"/>
 
   <!-- 기타 치수 -->
-  <xacro:property name="height"  value="0.13"/>
+  <xacro:property name="height"  value="0.228"/>
   <xacro:property name="beam_r"  value="0.004"/>
 
   <!-- 전체 오프셋 -->
