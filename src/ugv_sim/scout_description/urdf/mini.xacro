@@ -130,7 +130,7 @@
     <!-- Gazebo definitions  -->
     <xacro:include filename="$(find scout_description)/urdf/scout_mini.gazebo" />
 
-    <xacro:scout_mini_gripper parent="base_link" mount_x="0.15" mount_y="0.0" mount_z="0.1" opening_max="0.20"/>
+    <xacro:scout_mini_gripper parent="base_link" mount_x="0.15" mount_y="0.0" mount_z="0.12" opening_max="0.6"/>
     <gazebo>
         <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
         

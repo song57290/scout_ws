@@ -1,25 +1,33 @@
 <?xml version="1.0"?>
 <robot name="scout_mini_gripper" xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <xacro:macro name="scout_mini_gripper" params="parent mount_x:=0.15 mount_y:=0.0 mount_z:=0.1 opening_max:=0.18">
+  <xacro:macro name="scout_mini_gripper" params="parent mount_x:=0.15 mount_y:=0.1 mount_z:=0.1 opening_max:=0.3">
 
     <xacro:property name="finger_len" value="0.20"/>
     <xacro:property name="finger_thk" value="0.02"/>
     <xacro:property name="closed_gap" value="0.002"/>
     <xacro:property name="half_thk" value="${finger_thk/2.0}"/>
     <xacro:property name="half_gap" value="${closed_gap/2.0}"/>
-    <xacro:property name="open_default" value="0.06"/>
+    <xacro:property name="open_default" value="0.09"/>
 
     <xacro:property name="brace_thk" value="0.02"/>
-    <xacro:property name="connecter_h" value="${mount_z}"/>   <!-- 세로(높이) -->
-    <xacro:property name="connecter_l"    value="${mount_x}"/>   <!-- 가로(전방) -->
-
+    <xacro:property name="connecter_h" value="${mount_z}"/>
+    <xacro:property name="connecter_l" value="${mount_x}"/>
+    
     <link name="gripper_connecter">
       <visual>
-        <geometry><box size="${brace_thk} ${brace_thk} 0.2"/></geometry>
-        <material name="Grey"><color rgba="0.5 0.5 0.5 1.0"/></material>
+        <geometry>
+          <box size="${brace_thk} ${brace_thk} 0.12"/>
+        </geometry>
+        <material name="DarkGrey">
+          <color rgba="0.4 0.4 0.4 1.0"/>
+        </material>
       </visual>
-      <collision><geometry><box size="${brace_thk} ${brace_thk} ${connecter_h}"/></geometry></collision>
+      <collision>
+        <geometry>
+          <box size="${brace_thk} ${brace_thk} ${connecter_h + 0.02}"/>
+        </geometry>
+      </collision>
       <inertial>
         <mass value="0.2"/>
         <origin xyz="0 0 0"/>
@@ -30,18 +38,26 @@
     <joint name="gripper_connecter_mount" type="fixed">
       <parent link="${parent}"/>
       <child  link="gripper_connecter"/>
-      <origin xyz="0.18 ${mount_y} ${connecter_h/2.0}" rpy="0 0 0"/>
+      <origin xyz="0.18 ${mount_y} ${connecter_h/2.0 + 0.03}" rpy="0 0 0"/>
     </joint>
 
     <link name="gripper_arm">
       <visual>
-        <geometry><box size="${connecter_l} ${brace_thk} ${brace_thk}"/></geometry>
-        <material name="Grey"><color rgba="0.5 0.5 0.5 1.0"/></material>
+        <geometry>
+          <box size="${connecter_l} ${brace_thk} ${brace_thk}"/>
+        </geometry>
+        <material name="DarkGrey">
+          <color rgba="0.4 0.4 0.4 1.0"/>
+        </material>
       </visual>
-      <collision><geometry><box size="${connecter_l} ${brace_thk} ${brace_thk}"/></geometry></collision>
+      <collision>
+        <geometry>
+          <box size="${connecter_l} ${brace_thk} ${brace_thk}"/>
+        </geometry>
+      </collision>
       <inertial>
         <mass value="0.15"/>
-        <origin xyz="0 0 0"/>
+        <origin xyz="-0 0 0"/>
         <inertia ixx="0.00005" iyy="0.00005" izz="0.00002" ixy="0" ixz="0" iyz="0"/>
       </inertial>
     </link>
@@ -49,19 +65,51 @@
     <joint name="connecter_to_arm" type="prismatic">
       <parent link="gripper_connecter"/>
       <child  link="gripper_arm"/>
-      <origin xyz="${connecter_l/2.0} 0 ${connecter_h/2.0}" rpy="0 0 0"/>
+      <origin xyz="${connecter_l/2.0} 0 ${connecter_h/2.0 - 0.03}" rpy="0 0 0"/>
       <axis xyz="0 0 1"/>
-      <limit lower="-0.05" upper="0.05" effort="200" velocity="0.5"/>
+      <limit lower="-0.04" upper="0.02" effort="200" velocity="0.4"/>
       <dynamics damping="5.0" friction="0.1"/>
     </joint>
 
+    <link name="arm_vertical">
+        <visual>
+            <geometry>
+                <box size="${brace_thk} ${brace_thk} 0.15"/>
+            </geometry>
+            <material name="DarkGrey">
+                <color rgba="0.4 0.4 0.4 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="${brace_thk} ${brace_thk} 0.15"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="0.1"/>
+            <origin xyz="0 0 0"/>
+            <inertia ixx="0.00002" iyy="0.00002" izz="0.00002" ixy="0" ixz="0" iyz="0"/>
+        </inertial>
+    </link>
+
+    <joint name="arm_to_vertical" type="fixed">
+        <parent link="gripper_arm"/>
+        <child link="arm_vertical"/>
+        <origin xyz="${connecter_l/2.0} 0 ${-0.15/2.0 - brace_thk/2.0 + 0.02}" rpy="0 0 0"/>
+    </joint>
 
     <link name="gripper_base">
       <visual>
-        <geometry><box size="0.02 0.25 0.05"/></geometry>
-        <material name="Grey"><color rgba="0.5 0.5 0.5 1.0"/></material>
+        <geometry><box size="0.02 0.3 0.05"/></geometry>
+        <material name="DarkGrey">
+          <color rgba="0.4 0.4 0.4 1.0"/>
+        </material>
       </visual>
-      <collision><geometry><box size="0.02 0.25 0.05"/></geometry></collision>
+      <collision>
+        <geometry>
+          <box size="0.02 0.33 0.05"/>
+        </geometry>
+      </collision>
       <inertial>
         <mass value="0.5"/>
         <origin xyz="0 0 0"/>
@@ -69,18 +117,26 @@
       </inertial>
     </link>
 
-    <joint name="arm_to_gripper_base" type="fixed">
-      <parent link="gripper_arm"/>
+    <joint name="vertical_to_gripper_base" type="fixed">
+      <parent link="arm_vertical"/>
       <child  link="gripper_base"/>
-      <origin xyz="${connecter_l/2.0} 0 0" rpy="0 0 0"/>
+      <origin xyz="0 0 -0.075" rpy="0 0 0"/>
     </joint>
 
     <link name="left_finger">
       <visual>
-        <geometry><box size="${finger_len} ${finger_thk} 0.04"/></geometry>
-        <material name="Grey"><color rgba="0.5 0.5 0.5 1.0"/></material>
+        <geometry>
+          <box size="${finger_len} ${finger_thk} 0.04"/>
+        </geometry>
+        <material name="DarkGrey">
+          <color rgba="0.4 0.4 0.4 1.0"/>
+        </material>
       </visual>
-      <collision><geometry><box size="${finger_len} ${finger_thk} 0.04"/></geometry></collision>
+      <collision>
+        <geometry>
+          <box size="${finger_len} ${finger_thk} 0.04"/>
+        </geometry>
+      </collision>
       <inertial>
         <mass value="0.2"/>
         <origin xyz="0 0 0"/>
@@ -96,13 +152,48 @@
       <limit lower="${-open_default}" upper="${opening_max/2.0 - open_default}" effort="200" velocity="1.0"/>
       <dynamics damping="5.0" friction="0.1"/>
     </joint>
+    
+    <link name="left_finger_stopper">
+      <visual>
+        <geometry>
+          <box size="0.02 0.04 0.04"/>
+        </geometry>
+        <material name="DarkGrey">
+          <color rgba="0.2 0.2 0.2 1.0"/>
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="0.01 0.015 0.04"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.01"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="0.000001" iyy="0.000001" izz="0.000001" ixy="0" ixz="0" iyz="0"/>
+      </inertial>
+    </link>
+
+    <joint name="left_finger_stopper_joint" type="fixed">
+      <parent link="left_finger"/>
+      <child  link="left_finger_stopper"/>
+      <origin xyz="0.1 -0.01 0"/>
+    </joint>
 
     <link name="right_finger">
       <visual>
-        <geometry><box size="${finger_len} ${finger_thk} 0.04"/></geometry>
-        <material name="Grey"><color rgba="0.5 0.5 0.5 1.0"/></material>
+        <geometry>
+          <box size="${finger_len} ${finger_thk} 0.04"/>
+        </geometry>
+        <material name="DarkGrey">
+          <color rgba="0.4 0.4 0.4 1.0"/>
+        </material>
       </visual>
-      <collision><geometry><box size="${finger_len} ${finger_thk} 0.04"/></geometry></collision>
+      <collision>
+        <geometry>
+          <box size="${finger_len} ${finger_thk} 0.04"/>
+        </geometry>
+      </collision>
       <inertial>
         <mass value="0.2"/>
         <origin xyz="0 0 0"/>
@@ -117,6 +208,33 @@
       <axis xyz="0 -1 0"/>
       <limit lower="${-open_default}" upper="${opening_max/2.0 - open_default}" effort="200" velocity="1.0"/>
       <dynamics damping="5.0" friction="0.1"/>
+    </joint>
+
+    <link name="right_finger_stopper">
+      <visual>
+        <geometry>
+          <box size="0.02 0.04 0.04"/>
+        </geometry>
+        <material name="DarkGrey">
+          <color rgba="0.2 0.2 0.2 1.0"/>
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="0.01 0.015 0.04"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.01"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="0.000001" iyy="0.000001" izz="0.000001" ixy="0" ixz="0" iyz="0"/>
+      </inertial>
+    </link>
+
+    <joint name="right_finger_stopper_joint" type="fixed">
+      <parent link="right_finger"/>
+      <child  link="right_finger_stopper"/>
+      <origin xyz="0.1 0.01 0"/>
     </joint>
 
     <ros2_control name="gripper_ros2_control" type="system">
@@ -141,23 +259,31 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
-
     </ros2_control>
   </xacro:macro>
 
-  <gazebo reference="connecter_to_arm">
-    <material>Gazebo/Grey</material>
+  <gazebo reference="gripper_connecter">
+    <material>Gazebo/DarkGrey</material>
   </gazebo>
-    <gazebo reference="gripper_connecter_mount">
-  <material>Gazebo/Grey</material>
+  <gazebo reference="gripper_arm">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="arm_vertical">
+    <material>Gazebo/DarkGrey</material>
   </gazebo>
   <gazebo reference="gripper_base">
-    <material>Gazebo/Grey</material>
+    <material>Gazebo/DarkGrey</material>
   </gazebo>
-    <gazebo reference="left_finger">
-  <material>Gazebo/Grey</material>
+  <gazebo reference="left_finger">
+  <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="left_finger_stopper">
+    <material>Gazebo/Black</material>
   </gazebo>
   <gazebo reference="right_finger">
-    <material>Gazebo/Grey</material>
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="right_finger_stopper">
+    <material>Gazebo/Black</material>
   </gazebo>
 </robot>

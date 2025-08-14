@@ -1,6 +1,6 @@
 1. rviz, urdf, world 등 각종 파일 경로 수정
 2. 사용될 센서들 추가
-    => 기존 모델.png
+    => 기본 모델.png
 
     2.1 mount.xacro 추가
         => mount_Gazebo.png
@@ -55,9 +55,20 @@
     9.1 임계값 0.6이 되면 터미널에 알림 전송
         => yolo_detection_play.webm
 
-10. 소화기를 잡기 위한 gripper 추가
+10. 소화기를 잡기 위한 gripper.xacro 추가
+    => gripper초기.png
 
-    
+    10.1 땅에 있는 것을 그대로 집게 되면 계속 땅에 닿게 되니 높이 조절용 마운트를 추가
+        =>  gripper높이조절아래.png
+        =>  gripper높이조절위.png
+
+    10.2 소화기 정도의 크기면 괜찮지만 더 작은 것 못주움 -> arm부분을 구부림
+        => gripper 변형 위.png
+        => gripper 변형 아래.png
+        
+        10.2.1 물체가 밖으로 기울어져서 빠져 나갈 수 있음
+            => 위 사진과 함께 묶을 것
+
 11. 불이 감지되면 소화기로 돌아오게 하는 작업
 
 

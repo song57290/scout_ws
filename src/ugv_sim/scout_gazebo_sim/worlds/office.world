@@ -39907,8 +39907,8 @@
     <name>fire_extinguisher</name>
     <static>false</static>
     <pose>
-    0
-    0.2
+    1
+    3
     0
     0
     0

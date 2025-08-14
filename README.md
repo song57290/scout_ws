@@ -40,7 +40,7 @@ python yolo_fire_detection.py
 ## 3. 조이스틱 제어
 ---
 ```bash
-cd ~/scout_ws/ETRI_7004_UI__FIX
+cd ~/scout_ws/src/ETRI_7004_UI__FIX
 npm start
 ```
 ---
