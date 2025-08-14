@@ -1,0 +1,115 @@
+#lidar-terminal {
+  width: 20%;
+  height: 20%;
+  position: absolute;
+  left: 1%;
+  top: 7%;
+  z-index: 10;
+  border-radius: 8px;
+  background: #0935646c;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#lidar-canvas {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.377);
+  border: 1px solid #555;
+}
+#lidar-terminal {
+  width: 20%;
+  height: 20%;
+  position: absolute;
+  left: 1%;
+  top: 7%;
+  z-index: 10;
+  border-radius: 8px;
+  background: #0935646c;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#lidar-canvas {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.377);
+  border: 1px solid #555;
+}
+
+#lidar-toggle-container {
+  position: absolute;
+  top: 10px;
+  right: 40px;
+  z-index: 2000;
+}
+
+#lidar-toggle {
+  display: none;
+}
+.toggle-switch {
+  position: relative;
+  width: 80px;
+  height: 40px;
+  background-color: #bbb;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+}
+
+.slider {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 32px;
+  height: 32px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.status-text {
+  position: absolute;
+  right: 10px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+#lidar-toggle:checked + .toggle-switch {
+  background-color: #4caf50;
+}
+
+#lidar-toggle:checked + .toggle-switch .slider {
+  transform: translateX(40px);
+}
+
+#lidar-toggle:checked + .toggle-switch .status-text {
+  content: "Lidar On";
+  color: white;
+}
+.lidarHidden {
+  display: none;
+}
+#lidar-info {
+  position: absolute;
+  top: 1vh;
+  left: 0.6vw;
+  font-size: small;
+  background-color: #0057b377;
+  color: aliceblue;
+}
+#lidar-terminal {
+  transition: all 0.4s ease;
+}

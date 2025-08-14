@@ -1,0 +1,26 @@
+#robot-state-terminal {
+  width: 10%;
+  height: 5%;
+  position: absolute;
+  left: 70%;
+  top: 7%;
+  z-index: 10;
+  border-radius: 8px;
+  background: #1a1a1d60;
+  padding: 10px;
+  display: flex;
+
+  transition: all 0.3s ease;
+}
+
+#robot-state-terminal-battery {
+  width: 70%;
+  height: 100%;
+  background-color: #51ff0077;
+  color: aliceblue;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}

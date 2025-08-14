@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monitoring Page</title>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <link rel="stylesheet" href="./styles/base/base.css" />
+  <link rel="stylesheet" href="./styles/components/content.css" />
+  <link rel="stylesheet" href="./styles/components/header.css" />
+  <link rel="stylesheet" href="./styles/components/sidebar.css" />
+  <link rel="stylesheet" href="./styles/layout/cctvs.css" />
+  <body>
+    <div id="sidebar">
+      <h2>Unmanned Systems UI</h2>
+      <ul>
+        <li><a href="/controlling">Control</a></li>
+        <li><a class="active" href="/monitoring">Monitoring</a></li>
+        <li><a href="/detection">Detection</a></li>
+        <li><a href="/setting">Setting</a></li>
+      </ul>
+    </div>
+    <button id="toggleButton" onclick="toggleSidebar()">
+      <span class="arrow">&gt;</span>
+    </button>
+    <div class="content" id="content">
+      <div class="cctv-container" id="cctv-container">
+        <!-- JS에서 동적으로 CCTV 피드 생성 -->
+      </div>
+    </div>
+  </body>
+  <script src="./src/clientSet/clientLoad.js"></script>
+  <script>
+    // config.monitoring 배열을 기반으로 CCTV 피드 동적 생성
+    async function createCCTVFeeds() {
+      const response = await fetch('/api/getConfig');
+      const data = await response.json();
+      const monitoring = data.config && data.config.monitoring ? data.config.monitoring : [];
+      const container = document.getElementById('cctv-container');
+      container.innerHTML = '';
+      monitoring.forEach((item, idx) => {
+        const cctvDiv = document.createElement('div');
+        cctvDiv.className = 'cctv-feed';
+        cctvDiv.id = `${item.id}-container`;
+        cctvDiv.innerHTML = `
+          <img class="cctv-content" id="${item.id}" alt="${item.id}" />
+          <div class="cctv-title">${item.id}</div>
+          <div class="status" id="status${idx+1}">Status: Offline</div>
+        `;
+        container.appendChild(cctvDiv);
+      });
+    }
+    createCCTVFeeds();
+  </script>
+</html>

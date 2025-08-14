@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Configuration Settings</title>
+  </head>
+  <body>
+    <div id="sidebar">
+      <h2>Unmanned Systems UI</h2>
+      <ul>
+        <li><a href="/controlling">Control</a></li>
+        <li><a href="/monitoring">Monitoring</a></li>
+        <li><a href="/detection">Detection</a></li>
+        <li><a class="active" href="/setting">Setting</a></li>
+      </ul>
+    </div>
+
+    <div class="content" id="content">
+      <form id="configForm">
+        <div id="configContainer"></div>
+        <button type="submit" id="saveButton" preclass="button">저장</button>
+      </form>
+    </div>
+    <div id="customAlert" class="modal">
+      <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <p>설정 저장 완료</p>
+      </div>
+    </div>
+  </body>
+  <button id="helpButton" onclick="openExplainingPopup()">설명</button>
+  <div id="Explaing" class="explaining-popup">
+    <div class="popup-content">
+      <span id="close-btn" class="close-btn">&times;</span>
+      <h2>설명서 이미지</h2>
+      <img id="explaning-image" alt="설명서 이미지" class="explaning-image" />
+      <div class="nav-buttons">
+        <button id="prev-btn" class="nav-btn">이전</button>
+        <button id="next-btn" class="nav-btn">다음</button>
+      </div>
+    </div>
+  </div>
+  <div id="tooltips" class="tooltip-box">
+    설정을 변경한 뒤 저장버튼
+    <br />
+    (또는 ctrl + s)을 눌러주세요
+  </div>
+
+  <script src="./src/clientSet/clientLoad.js"></script>
+</html>

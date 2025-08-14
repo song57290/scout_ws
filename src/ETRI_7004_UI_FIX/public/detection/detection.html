@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detection Page</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="./styles/base/base.css" />
+    <link rel="stylesheet" href="./styles/components/content.css" />
+    <link rel="stylesheet" href="./styles/components/header.css" />
+    <link rel="stylesheet" href="./styles/components/sidebar.css" />
+    <link rel="stylesheet" href="./styles/layout/cctvs.css" />
+</head>
+<body>
+    <!-- 사이드바 -->
+    <div id="sidebar">
+        <h2>Unmanned Systems UI</h2>
+        <ul>
+            <li><a href="/controlling">Control</a></li>
+            <li><a href="/monitoring">Monitoring</a></li>
+            <li><a class="active" href="/detection">Detection</a></li>
+            <li><a href="/setting">Setting</a></li>
+        </ul>
+    </div>
+    
+    <button id="toggleButton" onclick="toggleSidebar()">
+        <span class="arrow">&gt;</span>
+    </button>
+    
+    <!-- YOLO 감지 영상 영역 -->
+    <div class="content" id="content">
+      <h2>실시간 YOLO 객체 감지</h2>
+      <div class="detection-container">
+          <img id="yolo-stream" src="http://localhost:3000/detection/video_feed" alt="YOLO Stream">
+      </div>
+</body>
+<script src="./src/clientSet/clientLoad.js"></script>
+</html>

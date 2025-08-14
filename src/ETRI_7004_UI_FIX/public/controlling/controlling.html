@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Controlling Dashboard</title>
+  </head>
+  <link rel="stylesheet" href="./styles/base/base.css" />
+  <link rel="stylesheet" href="./styles/components/content.css" />
+  <link rel="stylesheet" href="./styles/components/header.css" />
+  <link rel="stylesheet" href="./styles/components/sidebar.css" />
+  <link rel="stylesheet" href="./styles/layout/cameras.css" />
+  <link rel="stylesheet" href="./styles/layout/joysticks.css" />
+  <link rel="stylesheet" href="./styles/layout/lidar.css" />
+  <link rel="stylesheet" href="./styles/layout/map.css" />
+  <link rel="stylesheet" href="./styles/layout/modal.css" />
+  <link rel="stylesheet" href="./styles/layout/robotStates.css" />
+  <link rel="stylesheet" href="./styles/layout/help.css" />
+  <body>
+    <div id="sidebar">
+      <h2>Unmanned Systems UI</h2>
+      <ul>
+        <li><a class="active" href="/controlling">Control</a></li>
+        <li><a href="/monitoring">Monitoring</a></li>
+        <li><a href="/detection">Detection</a></li>
+        <li><a href="/setting">Setting</a></li>
+
+        <!-- 로봇 목록 제목 추가 -->
+        <div id="robot-list">
+          <hr />
+          <h3>로봇 목록</h3>
+          <!-- 로봇 선택 버튼 추가 (config 파일 내부 controlling 키 내부의 로봇 이름들을 추가) -->
+        </div>
+      </ul>
+    </div>
+
+    <button id="toggleButton" onclick="toggleSidebar()">
+      <span class="arrow">&gt;</span>
+    </button>
+
+    <div class="content" id="content">
+      <div id="headerBar">
+        <div id="switchButtons">
+          <button id="toggleCameraButton" onclick="toggleCameraView()">
+            RTSP 카메라 확장
+          </button>
+
+          <button id="toggleMapSizeButton" onclick="toggleMapSize()">
+            격자맵 화면 확장
+          </button>
+
+          <button id="fullscreenButton" onclick="toggleFullscreen()">
+            전체화면
+          </button>
+
+          <button id="showExplainButton" onclick="openExplainingPopup()">
+            도움말
+          </button>
+
+          <!-- 창 on/off 체크박스 -->
+          <label style="margin-left:16px"><input type="checkbox" id="toggle-lidar" checked> 2D LiDAR</label>
+          <label><input type="checkbox" id="toggle-map" checked> 맵</label>
+          <label><input type="checkbox" id="toggle-rtsp" checked> RTSP</label>
+          <label><input type="checkbox" id="toggle-ros" checked> ROS 카메라</label>
+          <label><input type="checkbox" id="toggle-battery" checked> 배터리</label>
+        </div>
+      </div>
+
+      <div id="camera-container">
+        <div id="camera-container-ros" class="fullscreen">
+          <img id="camera-image" src="" alt="for ros camera" />
+        </div>
+        <div id="camera-container-rtsp" class="mini">
+          <canvas id="camera-image-rtsp" width="640" height="480"></canvas>
+          <div id="ptz-controls">
+            <button id="ptz-up">▲</button>
+            <div style="display: flex; justify-content: center; align-items: center;">
+              <button id="ptz-left">◀</button>
+              <button id="ptz-home">●</button>
+              <button id="ptz-right">▶</button>
+            </div>
+            <div style="display: flex; justify-content: center; align-items: center;">
+              <button id="ptz-zoom-in">+</button>
+              <button id="ptz-down">▼</button>
+              <button id="ptz-zoom-out">-</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="lidar-terminal" class="hidden">
+          <canvas id="lidar-canvas" width="320" height="240"></canvas>
+
+          <div id="lidar-info">
+            <div></div>
+            <p>2D LiDAR Data</p>
+          </div>
+        </div>
+
+        <div id="map-terminal" class="hidden">
+          <canvas id="map-canvas" width="320" height="240"></canvas>
+          <div id="map-info">
+            <p>2D Grid Map</p>
+          </div>
+        </div>
+
+        <div id="robot-state-terminal" class="hidden">
+          <div id="robot-state-terminal-battery"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="customAlert" class="modal">
+      <div class="modal-content">
+        <p>시스템 준비 완료</p>
+        <button onclick="location.reload()">확인</button>
+      </div>
+    </div>
+
+    <div id="Explaing" class="explaining-popup">
+      <div class="popup-content">
+        <span id="close-btn" class="close-btn">&times;</span>
+        <h2>설명서 이미지</h2>
+        <img src="./image/ex.png" alt="설명서 이미지" class="explaning-image" />
+      </div>
+    </div>
+
+    </div>
+  </body>
+  <script src="./modules/roslib.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="./src/clientSet/clientLoad.js"></script>
+  <script>
+    document.getElementById('toggle-lidar').onchange = function(e) {
+      document.getElementById('lidar-terminal').style.display = e.target.checked ? 'block' : 'none';
+    };
+    document.getElementById('toggle-map').onchange = function(e) {
+      document.getElementById('map-terminal').style.display = e.target.checked ? 'block' : 'none';
+    };
+    document.getElementById('toggle-rtsp').onchange = function(e) {
+      document.getElementById('camera-container-rtsp').style.display = e.target.checked ? 'block' : 'none';
+    };
+    document.getElementById('toggle-battery').onchange = function(e) {
+      document.getElementById('robot-state-terminal').style.display = e.target.checked ? 'block' : 'none';
+    };
+    document.getElementById('toggle-ros').onchange = function(e) {
+      document.getElementById('camera-container-ros').style.display = e.target.checked ? 'block' : 'none';
+    };
+  </script>
+</html>

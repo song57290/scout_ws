@@ -131,7 +131,6 @@ def generate_launch_description() -> LaunchDescription:
     )
 
     # gripper와 joint state 브로드캐스터 컨트롤러 스포너
-    entity_name = "scout_mini"
     manager_ns  = "/controller_manager"
 
     spawner_js = Node(
@@ -228,6 +227,7 @@ def generate_launch_description() -> LaunchDescription:
     ld.add_action(joint_state_gui)
     ld.add_action(TimerAction(period=3.0, actions=[spawn_entity]))
     ld.add_action(TimerAction(period=8.0, actions=[spawner_js]))
+    ld.add_action(TimerAction(period=9.0, actions=[spawner_grip]))
     ld.add_action(TimerAction(period=9.7, actions=[spawner_height]))
     ld.add_action(nav2_bringup)
     ld.add_action(rviz_node)
