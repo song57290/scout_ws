@@ -148,6 +148,14 @@ def generate_launch_description() -> LaunchDescription:
         output="screen",
     )
 
+    spawner_height = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["gripper_height_controller", "--controller-manager", manager_ns, "--param-file", controllers_yaml],
+        output="screen",
+    )
+
+
     # Nav2 Bring-up
     nav2_bringup = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -185,7 +193,7 @@ def generate_launch_description() -> LaunchDescription:
         output='screen'
     )
 
-    # web_video_server: 로봇 카메라 스트리밍 (브라우저 MJPEG 전송용)
+    # web_video_server: 로봇 카메라 스트리밍
     web_video = Node(
         package='web_video_server',
         executable='web_video_server',
@@ -220,7 +228,7 @@ def generate_launch_description() -> LaunchDescription:
     ld.add_action(joint_state_gui)
     ld.add_action(TimerAction(period=3.0, actions=[spawn_entity]))
     ld.add_action(TimerAction(period=8.0, actions=[spawner_js]))
-    ld.add_action(TimerAction(period=9.0, actions=[spawner_grip]))
+    ld.add_action(TimerAction(period=9.7, actions=[spawner_height]))
     ld.add_action(nav2_bringup)
     ld.add_action(rviz_node)
     ld.add_action(dock_navigator)

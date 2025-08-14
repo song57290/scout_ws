@@ -16,7 +16,7 @@
 
     <link name="gripper_connecter">
       <visual>
-        <geometry><box size="${brace_thk} ${brace_thk} ${connecter_h}"/></geometry>
+        <geometry><box size="${brace_thk} ${brace_thk} 0.2"/></geometry>
         <material name="Grey"><color rgba="0.5 0.5 0.5 1.0"/></material>
       </visual>
       <collision><geometry><box size="${brace_thk} ${brace_thk} ${connecter_h}"/></geometry></collision>
@@ -46,11 +46,15 @@
       </inertial>
     </link>
 
-    <joint name="connecter_to_arm" type="fixed">
+    <joint name="connecter_to_arm" type="prismatic">
       <parent link="gripper_connecter"/>
       <child  link="gripper_arm"/>
       <origin xyz="${connecter_l/2.0} 0 ${connecter_h/2.0}" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="-0.05" upper="0.05" effort="200" velocity="0.5"/>
+      <dynamics damping="5.0" friction="0.1"/>
     </joint>
+
 
     <link name="gripper_base">
       <visual>
@@ -131,6 +135,13 @@
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
       </joint>
+      <joint name="connecter_to_arm">
+        <command_interface name="position"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+
     </ros2_control>
   </xacro:macro>
 
