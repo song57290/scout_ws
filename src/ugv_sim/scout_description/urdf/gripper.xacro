@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot name="scout_mini_gripper" xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <xacro:macro name="scout_mini_gripper" params="parent mount_x:=0.40 mount_y:=0.0 mount_z:=0.20 opening_max:=0.18">
+  <xacro:macro name="scout_mini_gripper" params="parent mount_x:=0.15 mount_y:=0.0 mount_z:=0.1 opening_max:=0.18">
 
     <xacro:property name="finger_len" value="0.20"/>
     <xacro:property name="finger_thk" value="0.02"/>
@@ -11,15 +11,15 @@
     <xacro:property name="open_default" value="0.06"/>
 
     <xacro:property name="brace_thk" value="0.02"/>
-    <xacro:property name="pillar_len" value="${mount_z}"/>   <!-- 세로(높이) -->
-    <xacro:property name="arm_len"    value="${mount_x}"/>   <!-- 가로(전방) -->
+    <xacro:property name="connecter_h" value="${mount_z}"/>   <!-- 세로(높이) -->
+    <xacro:property name="connecter_l"    value="${mount_x}"/>   <!-- 가로(전방) -->
 
-    <link name="gripper_pillar">
+    <link name="gripper_connecter">
       <visual>
-        <geometry><box size="${brace_thk} ${brace_thk} ${pillar_len}"/></geometry>
+        <geometry><box size="${brace_thk} ${brace_thk} ${connecter_h}"/></geometry>
         <material name="Grey"><color rgba="0.5 0.5 0.5 1.0"/></material>
       </visual>
-      <collision><geometry><box size="${brace_thk} ${brace_thk} ${pillar_len}"/></geometry></collision>
+      <collision><geometry><box size="${brace_thk} ${brace_thk} ${connecter_h}"/></geometry></collision>
       <inertial>
         <mass value="0.2"/>
         <origin xyz="0 0 0"/>
@@ -27,18 +27,18 @@
       </inertial>
     </link>
 
-    <joint name="gripper_pillar_mount" type="fixed">
+    <joint name="gripper_connecter_mount" type="fixed">
       <parent link="${parent}"/>
-      <child  link="gripper_pillar"/>
-      <origin xyz="0 ${mount_y} ${pillar_len/2.0}" rpy="0 0 0"/>
+      <child  link="gripper_connecter"/>
+      <origin xyz="0.18 ${mount_y} ${connecter_h/2.0}" rpy="0 0 0"/>
     </joint>
 
     <link name="gripper_arm">
       <visual>
-        <geometry><box size="${arm_len} ${brace_thk} ${brace_thk}"/></geometry>
+        <geometry><box size="${connecter_l} ${brace_thk} ${brace_thk}"/></geometry>
         <material name="Grey"><color rgba="0.5 0.5 0.5 1.0"/></material>
       </visual>
-      <collision><geometry><box size="${arm_len} ${brace_thk} ${brace_thk}"/></geometry></collision>
+      <collision><geometry><box size="${connecter_l} ${brace_thk} ${brace_thk}"/></geometry></collision>
       <inertial>
         <mass value="0.15"/>
         <origin xyz="0 0 0"/>
@@ -46,10 +46,10 @@
       </inertial>
     </link>
 
-    <joint name="pillar_to_arm" type="fixed">
-      <parent link="gripper_pillar"/>
+    <joint name="connecter_to_arm" type="fixed">
+      <parent link="gripper_connecter"/>
       <child  link="gripper_arm"/>
-      <origin xyz="${arm_len/2.0} 0 ${pillar_len/2.0}" rpy="0 0 0"/>
+      <origin xyz="${connecter_l/2.0} 0 ${connecter_h/2.0}" rpy="0 0 0"/>
     </joint>
 
     <link name="gripper_base">
@@ -68,7 +68,7 @@
     <joint name="arm_to_gripper_base" type="fixed">
       <parent link="gripper_arm"/>
       <child  link="gripper_base"/>
-      <origin xyz="${arm_len/2.0} 0 0" rpy="0 0 0"/>
+      <origin xyz="${connecter_l/2.0} 0 0" rpy="0 0 0"/>
     </joint>
 
     <link name="left_finger">
@@ -134,6 +134,12 @@
     </ros2_control>
   </xacro:macro>
 
+  <gazebo reference="connecter_to_arm">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+    <gazebo reference="gripper_connecter_mount">
+  <material>Gazebo/Grey</material>
+  </gazebo>
   <gazebo reference="gripper_base">
     <material>Gazebo/Grey</material>
   </gazebo>
