@@ -85,5 +85,3 @@ go2 부분 urdf도 확인
 PPT 참고
 https://m.blog.naver.com/xiilab/223476760262
 https://iambeginnerdeveloper.tistory.com/279
-
-
