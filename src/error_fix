@@ -1,0 +1,398 @@
+[rviz2-6] [INFO]: Message Filter dropping message: frame 'odom' at time 0.700 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+위 오류를 수정하기 위해 아래의 작업 시행
+
+    ros2 param get /rviz2 use_sim_time
+Boolean value is: False
+
+    ros2 param set /rviz2 use_sim_time true
+Set parameter successful
+
+    for n in $(ros2 node list); do   echo "== $n ==";   ros2 param get $n use_sim_time 2>/dev/null || echo "(no param)"; done
+== /amcl ==
+Boolean value is: True
+== /aruco_marker_subscriber ==
+Boolean value is: False
+== /battery_state_subscriber ==
+Boolean value is: False
+== /behavior_server ==
+Boolean value is: False
+== /bt_navigator ==
+Boolean value is: True
+== /bt_navigator_navigate_through_poses_rclcpp_node ==
+^C(no param)
+== /bt_navigator_navigate_to_pose_rclcpp_node ==
+^C(no param)
+== /camera_subscriber ==
+Boolean value is: False
+== /color_camera_controller ==
+Boolean value is: True
+== /connect_to_charging_dock_navigator ==
+Boolean value is: False
+== /controller_manager ==
+Boolean value is: True
+== /controller_server ==
+Boolean value is: True
+== /depth_camera_controller ==
+Boolean value is: True
+== /diff_drive ==
+Boolean value is: True
+== /gazebo ==
+Boolean value is: True
+== /gazebo_ros2_control ==
+Boolean value is: True
+== /gazebo_ros_front_laserscan ==
+Boolean value is: True
+== /gazebo_ros_laser_controller ==
+Boolean value is: True
+== /global_costmap/global_costmap ==
+Boolean value is: True
+== /gripper_controller ==
+Boolean value is: True
+== /gripper_height_controller ==
+Boolean value is: True
+== /joint_state_broadcaster ==
+Boolean value is: True
+== /joint_state_publisher ==
+Boolean value is: True
+== /launch_ros_18380 ==
+Boolean value is: False
+== /lifecycle_manager_localization ==
+Boolean value is: True
+== /lifecycle_manager_navigation ==
+Boolean value is: True
+== /local_costmap/local_costmap ==
+Boolean value is: True
+== /map_server ==
+Boolean value is: True
+== /nav2_container ==
+(no param)
+== /planner_server ==
+Boolean value is: True
+== /robot_state_publisher ==
+Boolean value is: True
+== /rosbridge_websocket ==
+Boolean value is: False
+== /rviz2 ==
+Boolean value is: True
+== /rviz_navigation_dialog_action_client ==
+^C(no param)
+== /smoother_server ==
+Boolean value is: False
+== /transform_listener_impl_5b805a6fb4e0 ==
+(no param)
+== /transform_listener_impl_756040002cc0 ==
+(no param)
+== /transform_listener_impl_75604c00a6b0 ==
+(no param)
+== /transform_listener_impl_756060002df0 ==
+(no param)
+== /transform_listener_impl_756064004290 ==
+(no param)
+== /transform_listener_impl_75607401ad70 ==
+(no param)
+== /velocity_smoother ==
+Boolean value is: False
+== /waypoint_follower ==
+Boolean value is: False
+== /web_video_server ==
+Boolean value is: False
+
+    ros2 topic echo /clock --once
+clock:
+  sec: 530
+  nanosec: 800000000
+---
+
+    ros2 topic echo /tf --once
+    ros2 topic echo /tf_static --once
+    ros2 topic hz /tf
+transforms:
+- header:
+    stamp:
+      sec: 541
+      nanosec: 952000000
+    frame_id: gripper_connecter
+  child_frame_id: gripper_arm
+  transform:
+    translation:
+      x: 0.075
+      y: 0.0
+      z: 0.029929853419528342
+    rotation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+- header:
+    stamp:
+      sec: 541
+      nanosec: 952000000
+    frame_id: gripper_base
+  child_frame_id: left_finger
+  transform:
+    translation:
+      x: 0.1
+      y: 0.10099658818638357
+      z: 0.0
+    rotation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+- header:
+    stamp:
+      sec: 541
+      nanosec: 952000000
+    frame_id: gripper_base
+  child_frame_id: right_finger
+  transform:
+    translation:
+      x: 0.1
+      y: -0.10100341187980225
+      z: 0.0
+    rotation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+---
+transforms:
+- header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: gripper_arm
+  child_frame_id: arm_vertical
+  transform:
+    translation:
+      x: 0.075
+      y: 0.0
+      z: -0.06499999999999999
+    rotation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+- header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: base_link
+  child_frame_id: base_footprint
+  transform:
+    translation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    rotation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+- header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: velodyne_mount_link
+  child_frame_id: camera_link
+  transform:
+    translation:
+      x: 0.085
+      y: 0.0
+      z: 0.232
+    rotation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+- header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: velodyne_base_link
+  child_frame_id: front_laser
+  transform:
+    translation:
+      x: 0.0
+      y: 0.0
+      z: 0.1
+    rotation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+- header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: velodyne_mount_link
+  child_frame_id: depth_camera_link
+  transform:
+    translation:
+      x: 0.085
+      y: 0.0
+      z: 0.239
+    rotation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+- header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: base_link
+  child_frame_id: gripper_connecter
+  transform:
+    translation:
+      x: 0.18
+      y: 0.0
+      z: 0.09
+    rotation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+- header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: base_link
+  child_frame_id: inertial_link
+  transform:
+    translation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    rotation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+- header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: left_finger
+  child_frame_id: left_finger_stopper
+  transform:
+    translation:
+      x: 0.1
+      y: -0.01
+      z: 0.0
+    rotation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+- header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: right_finger
+  child_frame_id: right_finger_stopper
+  transform:
+    translation:
+      x: 0.1
+      y: 0.01
+      z: 0.0
+    rotation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+- header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: velodyne_mount_link
+  child_frame_id: velodyne_base_link
+  transform:
+    translation:
+      x: 0.0
+      y: 0.0
+      z: 0.243
+    rotation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+- header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: velodyne_base_link
+  child_frame_id: velodyne
+  transform:
+    translation:
+      x: 0.0
+      y: 0.0
+      z: 0.0377
+    rotation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+- header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: base_link
+  child_frame_id: velodyne_mount_link
+  transform:
+    translation:
+      x: -0.05
+      y: 0.0
+      z: 0.06
+    rotation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+- header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: arm_vertical
+  child_frame_id: gripper_base
+  transform:
+    translation:
+      x: 0.0
+      y: 0.0
+      z: -0.075
+    rotation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+---
+average rate: 141.530
+	min: 0.000s max: 0.066s std dev: 0.01341s window: 145
+average rate: 140.891
+	min: 0.000s max: 0.068s std dev: 0.01342s window: 293
+average rate: 142.819
+	min: 0.000s max: 0.068s std dev: 0.01305s window: 441
+
+    ros2 run tf2_ros tf2_echo odom base_link -r 0.2
+[INFO]: Waiting for transform odom ->  base_link: Invalid frame ID "odom" passed to canTransform argument target_frame - frame does not exist
+At time 568.0
+- Translation: [0.222, 1.510, 0.179]
+- Rotation: in Quaternion (xyzw) [-0.001, -0.000, 0.113, 0.994]
+- Rotation: in RPY (radian) [-0.002, 0.000, 0.227]
+- Rotation: in RPY (degree) [-0.116, 0.000, 13.021]
+- Matrix:
+  0.974 -0.225 -0.000  0.222
+  0.225  0.974  0.002  1.510
+ -0.000 -0.002  1.000  0.179
+  0.000  0.000  0.000  1.000
+At time 570.652000000
+- Translation: [0.222, 1.510, 0.179]
+- Rotation: in Quaternion (xyzw) [-0.001, -0.000, 0.113, 0.994]
+- Rotation: in RPY (radian) [-0.002, 0.000, 0.227]
+- Rotation: in RPY (degree) [-0.116, 0.000, 13.021]
+- Matrix:
+  0.974 -0.225 -0.000  0.222
+  0.225  0.974  0.002  1.510
+ -0.000 -0.002  1.000  0.179
+  0.000  0.000  0.000  1.000
+^C[INFO]: signal_handler(signum=2)

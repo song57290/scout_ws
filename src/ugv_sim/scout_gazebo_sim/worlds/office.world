@@ -39955,11 +39955,33 @@
     0
     1.9
     </pose>
+  </include>
+
+  <include>
+    <uri>model://cone_red</uri>
+    <name>cone_red</name>
+    <pose>
+    2.0
+    3.0
+    0.0
+    0
+    0
+    1.9
+    </pose>
+  </include>
+
+  <include>
+    <uri>model://red_target</uri>
+    <name>red_target</name>
+    <pose>
+    2.0
+    4.0
+    0.0
+    0
+    0
+    1.9
+    </pose>
   </include> -->
-
-
-
-
 
   </world>
 </sdf>
