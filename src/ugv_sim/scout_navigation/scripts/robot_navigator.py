@@ -43,6 +43,7 @@ class BasicNavigator(Node):
         super().__init__(node_name='basic_navigator')
         self.initial_pose = PoseStamped()
         self.initial_pose.header.frame_id = 'map'
+        self._initial_pose_explicit = False # 중복 실행 방지
         self.goal_handle = None
         self.result_future = None
         self.feedback = None
@@ -81,6 +82,7 @@ class BasicNavigator(Node):
     def setInitialPose(self, initial_pose):
         self.initial_pose_received = False
         self.initial_pose = initial_pose
+        self._initial_pose_explicit = True      # 추가
         self._setInitialPose()
 
     def goThroughPoses(self, poses):
@@ -366,9 +368,11 @@ class BasicNavigator(Node):
 
     def _waitForInitialPose(self):
         while not self.initial_pose_received:
-            self.info('Setting initial pose')
-            self._setInitialPose()
-            self.info('Waiting for amcl_pose to be received')
+            if self._initial_pose_explicit:
+                self.info('Setting initial pose')
+                self._setInitialPose()
+            else:
+                self.info('Waiting for amcl_pose to be received')
             rclpy.spin_once(self, timeout_sec=1.0)
         return
 
@@ -383,13 +387,22 @@ class BasicNavigator(Node):
         return
 
     def _setInitialPose(self):
+    # 사용자가 명시하지 않았으면 퍼블리시하지 않음
+        if not self._initial_pose_explicit:
+            return
         msg = PoseWithCovarianceStamped()
         msg.pose.pose = self.initial_pose.pose
         msg.header.frame_id = self.initial_pose.header.frame_id
-        msg.header.stamp = self.initial_pose.header.stamp
+        # stamp이 비어있으면 현재 시간으로
+        if getattr(self.initial_pose.header.stamp, "sec", 0) == 0 and \
+        getattr(self.initial_pose.header.stamp, "nanosec", 0) == 0:
+            msg.header.stamp = self.get_clock().now().to_msg()
+        else:
+            msg.header.stamp = self.initial_pose.header.stamp
         self.info('Publishing Initial Pose')
         self.initial_pose_pub.publish(msg)
         return
+
 
     def info(self, msg):
         self.get_logger().info(msg)
