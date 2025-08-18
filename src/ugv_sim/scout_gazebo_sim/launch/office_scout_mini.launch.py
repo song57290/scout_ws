@@ -25,13 +25,13 @@ def generate_launch_description() -> LaunchDescription:
 
     urdf_xacro_path  = os.path.join(description_share, "urdf/mini.xacro")
     world_file_path  = os.path.join(gazebo_share, "worlds/office.world")
-    dock_script_path = os.path.join(gazebo_share, "scripts/scout_navigate.py")
+    dock_script_path = os.path.join(nav_pkg, "scripts/scout_navigate.py")
     controllers_yaml = os.path.join(gazebo_share, "config/controllers.yaml")  # gripper 컨트롤러 설정 파일
 
     map_yaml_default    = os.path.join(nav_share, "maps/office_world/office_world.yaml")
     nav2_params_default = os.path.join(nav_share, "params/office_world/nav2_params.yaml")
     rviz_config_default = os.path.join(nav_share, "rviz/office_nav2_config.rviz")
-    # rviz_config_default = os.path.join(nav_share, "rviz/basic.rviz")
+    # rviz_config_default = os.path.join(nav_share, "rviz/basic.rviz") # 모델링 테스트용
 
     # Gazebo 모델 경로 환경변수
     os.environ["GAZEBO_MODEL_PATH"] = os.path.join(gazebo_share, "models")

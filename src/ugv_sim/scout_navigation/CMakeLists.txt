@@ -18,6 +18,7 @@ install(
     maps
     rviz
     params
+    scripts
   DESTINATION
     share/${PROJECT_NAME}/
 )
