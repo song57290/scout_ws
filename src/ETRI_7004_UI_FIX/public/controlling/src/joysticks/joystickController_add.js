@@ -1,7 +1,7 @@
 class JoystickController {
     constructor(ros, cmdVel, onvifCamera) {
         this.ros = ros;
-        this.cmdVel = cmdVel;
+        this.cmdVel = '/cmd_vel_joy';
         this.onvifCamera = onvifCamera;
         this.maxLinearSpeed = 1/2;
         this.maxAngularSpeed = 3.14/4;
@@ -19,6 +19,9 @@ class JoystickController {
         this.heightPub = new ROSLIB.Topic({ ros:this.ros, name:'/gripper_height_controller/commands', messageType:'std_msgs/Float64MultiArray' });
         this.gripPub   = new ROSLIB.Topic({ ros:this.ros, name:'/gripper_controller/commands',        messageType:'std_msgs/Float64MultiArray' });
 
+        this.modePub = new ROSLIB.Topic({ ros:this.ros, name:'/auto_mode', messageType:'std_msgs/Bool' });
+        this.twistPub = new ROSLIB.Topic({ ros:this.ros, name:this.cmdVel, messageType:"geometry_msgs/Twist" });
+
         this.jointStates = new ROSLIB.Topic({ ros:this.ros, name:'/joint_states', messageType:'sensor_msgs/JointState' });
         this.jointStates.subscribe((msg) => {
             const hi = msg.name.indexOf('connecter_to_arm');
@@ -28,6 +31,11 @@ class JoystickController {
         });
 
         this.initPTZButtons();
+    }
+
+    sendMode(b) {
+        this.modePub.publish(new ROSLIB.Message({ data: b }));
+        this.twistPub.publish(new ROSLIB.Message({ linear:{x:0,y:0,z:0}, angular:{x:0,y:0,z:0} }));
     }
 
     connectToCamera() {
@@ -63,14 +71,17 @@ class JoystickController {
         const now = Date.now();
         if (now - this.lastSentTime < this.messageInterval) { requestAnimationFrame(this.updateGamepadStatus.bind(this)); return; }
 
+        if (gamepad.buttons[0]?.pressed) this.sendMode(true);
+        if (gamepad.buttons[2]?.pressed) this.sendMode(false);
+
         if (gamepad.buttons[3]?.pressed) this.zoomControll("zoomIn");
         if (gamepad.buttons[1]?.pressed) this.zoomControll("zoomOut");
 
         if (gamepad.buttons[12]?.pressed) { this.heightCmd += this.heightStep; this.publishHeight(); }
         if (gamepad.buttons[13]?.pressed) { this.heightCmd -= this.heightStep; this.publishHeight(); }
 
-        if (gamepad.buttons[15]?.pressed) { this.gripCmd += this.gripStep; this.publishGrip(); } // open
-        if (gamepad.buttons[14]?.pressed) { this.gripCmd -= this.gripStep; this.publishGrip(); } // close
+        if (gamepad.buttons[15]?.pressed) { this.gripCmd += this.gripStep; this.publishGrip(); }
+        if (gamepad.buttons[14]?.pressed) { this.gripCmd -= this.gripStep; this.publishGrip(); }
 
         const vx = parseFloat(gamepad.axes[0] * this.maxAngularSpeed);
         const vy = parseFloat(-gamepad.axes[1] * this.maxLinearSpeed);
@@ -80,7 +91,7 @@ class JoystickController {
         else if (gamepad.buttons[6]?.pressed) twist = new ROSLIB.Message({ linear: { x: 0, y: 0, z: 0 }, angular: { x: 0, y: 0, z: 0 } });
         else twist = new ROSLIB.Message({ linear: { x: vy, y: 0, z: 0 }, angular: { x: 0, y: 0, z: -vx } });
 
-        new ROSLIB.Topic({ ros:this.ros, name:this.cmdVel, messageType:"geometry_msgs/Twist" }).publish(twist);
+        this.twistPub.publish(twist);
 
         if (gamepad.buttons[5]?.pressed) this.zeroPointCamera();
 
@@ -117,4 +128,3 @@ class JoystickController {
     zeroPointCamera() { this.socket.emit('zeroPointCamera'); }
     zoomControll(d) { const s=0.1; this.totalZoom+= d==="zoomIn"? s:-s; this.moveCamera({x:0,y:0,zoom:d==="zoomIn"? s:-s}); }
 }
-

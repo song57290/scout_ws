@@ -62,16 +62,16 @@ ps faux | grep gzserver
 # YOLO.V8
 https://devshin.notion.site/Project-ROS2-with-YOLOv8-0e5f104cb8ca43ccb03b04c49100131d
 
-## 1. yolov8_ros 패키지를 가져오고 빌드
+## 1. yolov8_ros 패키지를 가져오고 빌드(사물 인식)
 ---
 ```bash
-cd ~/ros2_ws/src
+cd ~/scout_ws/src
 git clone https://github.com/mgonzs13/yolov8_ros.git -b 2.2.1
 pip3 install -r yolov8_ros/requirements.txt
 sudo apt install ros-humble-vision-msgs
 
 # build
-cd ~/ros2_ws
+cd ~/scout_ws
 colcon build --symlink-install --packages-select yolov8_msgs
 colcon build --symlink-install --packages-up-to yolov8_bringup
 ```

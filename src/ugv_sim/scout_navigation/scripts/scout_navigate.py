@@ -82,7 +82,7 @@ class ConnectToChargingDockNavigator(Node):
       # This node publishes the desired linear and angular velocity of the robot
       self.publisher_cmd_vel = self.create_publisher(
         Twist,
-        '/cmd_vel',
+        '/cmd_vel_nav',
         10)
       timer_period = 0.1
       self.timer = self.create_timer(timer_period, self.navigate_to_dock_staging_area)

@@ -1,199 +1,86 @@
 #! /usr/bin/env python3
-# Copyright 2021 Samsung Research America
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-# Modified by AutomaticAddison.com
+import math
+import rclpy
+from rclpy.node import Node
+from rclpy.duration import Duration
+from std_msgs.msg import Bool
+from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped
+from robot_navigator import BasicNavigator
 
-import time # Time library
+class WaypointFollower(Node):
+    def __init__(self):
+        super().__init__('waypoint_follower')
 
-from geometry_msgs.msg import PoseStamped # Pose with ref frame and timestamp
-from rclpy.duration import Duration # Handles time for ROS 2
-import rclpy # Python client library for ROS 2
+        self.nav = BasicNavigator()
+        self.nav.waitUntilNav2Active()
 
-from robot_navigator import BasicNavigator, TaskResult # Helper module
+        self.auto = False
+        self.running = False
+        self.amcl_ok = False
+        self.goal_poses = self._build_goals()
+        self.nav_start = None
+        self.i = 0
 
-'''
-Follow waypoints using the ROS 2 Navigation Stack (Nav2)
-'''
+        self.sub_mode = self.create_subscription(Bool, '/auto_mode', self.cb_mode, 10)
+        self.sub_amcl = self.create_subscription(
+            PoseWithCovarianceStamped, '/amcl_pose', self.cb_amcl, 10
+        )
+        self.timer = self.create_timer(0.1, self.tick)
+
+    def cb_amcl(self, _msg: PoseWithCovarianceStamped):
+        self.amcl_ok = True
+
+    def _build_goals(self):
+        def mk(x,y,oz,ow):
+            p = PoseStamped()
+            p.header.frame_id = 'map'
+            p.header.stamp = self.nav.get_clock().now().to_msg()
+            p.pose.position.x = x; p.pose.position.y = y; p.pose.position.z = 0.0
+            p.pose.orientation.x = 0.0; p.pose.orientation.y = 0.0
+            p.pose.orientation.z = oz; p.pose.orientation.w = ow
+            return p
+        return [
+            mk( 12.0,  4.60, 0.23,  0.97),
+            mk( 20.0, 13.20, 0.707, -0.707),
+            mk( -5.45, 18.0, 0.92, -0.38),
+            mk( -5.35, 2.10, 0.92,  0.38),
+            mk( 0.0,  0.1, 0.0,   1.0),
+        ]
+
+    def cb_mode(self, msg: Bool):
+        self.auto = bool(msg.data)
+        if not self.auto and self.running:
+            self.nav.cancelTask()
+            self.running = False
+
+    def _start_follow(self):
+        if not self.amcl_ok:
+            return
+        self.goal_poses = self._build_goals()
+        self.nav.followWaypoints(self.goal_poses)
+        self.running = True
+        self.i = 0
+        self.nav_start = self.nav.get_clock().now()
+
+    def tick(self):
+        if self.auto and not self.running:
+            self._start_follow()
+            return
+        if not self.running:
+            return
+        if self.nav.isTaskComplete():
+            _res = self.nav.getResult()
+            self.running = False
+            return
+        self.i += 1
+        # (피드백/타임아웃 로직은 필요시 추가 유지)
+        
 def main():
-
-  # Start the ROS 2 Python Client Library
-  rclpy.init()
-
-  # Launch the ROS 2 Navigation Stack
-  navigator = BasicNavigator()
-
-  # Set the robot's initial pose if necessary
-  # initial_pose = PoseStamped()
-  # initial_pose.header.frame_id = 'map'
-  # initial_pose.header.stamp = navigator.get_clock().now().to_msg()
-  # initial_pose.pose.position.x = 0.0
-  # initial_pose.pose.position.y = 0.0
-  # initial_pose.pose.position.z = 0.0
-  # initial_pose.pose.orientation.x = 0.0
-  # initial_pose.pose.orientation.y = 0.0
-  # initial_pose.pose.orientation.z = 0.0
-  # initial_pose.pose.orientation.w = 1.0
-  # navigator.setInitialPose(initial_pose)
-
-  # Activate navigation, if not autostarted. This should be called after setInitialPose()
-  # or this will initialize at the origin of the map and update the costmap with bogus readings.
-  # If autostart, you should `waitUntilNav2Active()` instead.
-  # navigator.lifecycleStartup()
-
-  # Wait for navigation to fully activate. Use this line if autostart is set to true.
-  navigator.waitUntilNav2Active()
-
-  # If desired, you can change or load the map as well
-  # navigator.changeMap('/path/to/map.yaml')
-
-  # You may use the navigator to clear or obtain costmaps
-  # navigator.clearAllCostmaps()  # also have clearLocalCostmap() and clearGlobalCostmap()
-  # global_costmap = navigator.getGlobalCostmap()
-  # local_costmap = navigator.getLocalCostmap()
-
-  # Set the robot's goal poses
-  goal_poses = []
-  
-  goal_pose = PoseStamped()
-  goal_pose.header.frame_id = 'map'
-  goal_pose.header.stamp = navigator.get_clock().now().to_msg()
-  goal_pose.pose.position.x = 1.3
-  goal_pose.pose.position.y = 6.0
-  goal_pose.pose.position.z = 0.0
-  goal_pose.pose.orientation.x = 0.0
-  goal_pose.pose.orientation.y = 0.0
-  goal_pose.pose.orientation.z = 0.23
-  goal_pose.pose.orientation.w = 0.97
-  goal_poses.append(goal_pose)
-  
-  goal_pose = PoseStamped()
-  goal_pose.header.frame_id = 'map'
-  goal_pose.header.stamp = navigator.get_clock().now().to_msg()
-  goal_pose.pose.position.x = 2.0
-  goal_pose.pose.position.y = -3.5
-  goal_pose.pose.position.z = 0.0
-  goal_pose.pose.orientation.x = 0.0
-  goal_pose.pose.orientation.y = 0.0
-  goal_pose.pose.orientation.z = 0.707
-  goal_pose.pose.orientation.w = -0.707
-  goal_poses.append(goal_pose)
-  
-  goal_pose = PoseStamped()
-  goal_pose.header.frame_id = 'map'
-  goal_pose.header.stamp = navigator.get_clock().now().to_msg()
-  goal_pose.pose.position.x = 1.5
-  goal_pose.pose.position.y = -7.7
-  goal_pose.pose.position.z = 0.0
-  goal_pose.pose.orientation.x = 0.0
-  goal_pose.pose.orientation.y = 0.0
-  goal_pose.pose.orientation.z = 0.92
-  goal_pose.pose.orientation.w = -0.38
-  goal_poses.append(goal_pose)
-  
-  goal_pose = PoseStamped()
-  goal_pose.header.frame_id = 'map'
-  goal_pose.header.stamp = navigator.get_clock().now().to_msg()
-  goal_pose.pose.position.x = -1.4
-  goal_pose.pose.position.y = -7.8
-  goal_pose.pose.position.z = 0.0
-  goal_pose.pose.orientation.x = 0.0
-  goal_pose.pose.orientation.y = 0.0
-  goal_pose.pose.orientation.z = 0.92
-  goal_pose.pose.orientation.w = 0.38
-  goal_poses.append(goal_pose)
- 
-  goal_pose = PoseStamped()
-  goal_pose.header.frame_id = 'map'
-  goal_pose.header.stamp = navigator.get_clock().now().to_msg()
-  goal_pose.pose.position.x = -2.6
-  goal_pose.pose.position.y = -4.5
-  goal_pose.pose.position.z = 0.0
-  goal_pose.pose.orientation.x = 0.0
-  goal_pose.pose.orientation.y = 0.0
-  goal_pose.pose.orientation.z = 0.38
-  goal_pose.pose.orientation.w = 0.92
-  goal_poses.append(goal_pose)
-  
-  goal_pose = PoseStamped()
-  goal_pose.header.frame_id = 'map'
-  goal_pose.header.stamp = navigator.get_clock().now().to_msg()
-  goal_pose.pose.position.x = 0.0
-  goal_pose.pose.position.y = 0.0
-  goal_pose.pose.position.z = 0.0
-  goal_pose.pose.orientation.x = 0.0
-  goal_pose.pose.orientation.y = 0.0
-  goal_pose.pose.orientation.z = 0.0
-  goal_pose.pose.orientation.w = 1.0
-  goal_poses.append(goal_pose)
-
-  # sanity check a valid path exists
-  # path = navigator.getPathThroughPoses(initial_pose, goal_poses)
-
-  nav_start = navigator.get_clock().now()
-  navigator.followWaypoints(goal_poses)
-
-  i = 0
-  while not navigator.isTaskComplete():
-    ################################################
-    #
-    # Implement some code here for your application!
-    #
-    ################################################
-
-    # Do something with the feedback
-    i = i + 1
-    feedback = navigator.getFeedback()
-    if feedback and i % 5 == 0:
-      print('Executing current waypoint: ' +
-            str(feedback.current_waypoint + 1) + '/' + str(len(goal_poses)))
-      now = navigator.get_clock().now()
-
-      # Some navigation timeout to demo cancellation
-      if now - nav_start > Duration(seconds=100000000.0):
-        navigator.cancelTask()
-
-      # Some follow waypoints request change to demo preemption
-      if now - nav_start > Duration(seconds=500000.0):
-        goal_pose_alt = PoseStamped()
-        goal_pose_alt.header.frame_id = 'map'
-        goal_pose_alt.header.stamp = now.to_msg()
-        goal_pose_alt.pose.position.x = -6.5
-        goal_pose_alt.pose.position.y = -4.2
-        goal_pose_alt.pose.position.z = 0.0
-        goal_pose_alt.pose.orientation.x = 0.0
-        goal_pose_alt.pose.orientation.y = 0.0   
-        goal_pose_alt.pose.orientation.z = 0.0
-        goal_pose_alt.pose.orientation.w = 1.0
-        goal_poses = [goal_pose_alt]
-        nav_start = now
-        navigator.followWaypoints(goal_poses)
-
-  # Do something depending on the return code
-  result = navigator.getResult()
-  if result == TaskResult.SUCCEEDED:
-    print('Goal succeeded!')
-  elif result == TaskResult.CANCELED:
-    print('Goal was canceled!')
-  elif result == TaskResult.FAILED:
-    print('Goal failed!')
-  else:
-    print('Goal has an invalid return status!')
-
-  navigator.lifecycleShutdown()
-
-  exit(0)
+    rclpy.init()
+    n = WaypointFollower()
+    rclpy.spin(n)
+    n.destroy_node()
+    rclpy.shutdown()
 
 if __name__ == '__main__':
-  main()
+    main()
