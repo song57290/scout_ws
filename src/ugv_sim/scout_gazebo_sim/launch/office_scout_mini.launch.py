@@ -69,6 +69,8 @@ def generate_launch_description() -> LaunchDescription:
 
     declare_use_rviz = DeclareLaunchArgument(
         "use_rviz", default_value="true", description="Launch RViz?")
+    declare_use_dock = DeclareLaunchArgument(
+    "use_dock", default_value="false", description="Run dock navigator script?")
 
     # LaunchConfiguration 객체
     use_sim_time = LaunchConfiguration("use_sim_time")
@@ -82,6 +84,8 @@ def generate_launch_description() -> LaunchDescription:
     autostart    = LaunchConfiguration("autostart")
     rviz_config  = LaunchConfiguration("rviz_config")
     use_rviz     = LaunchConfiguration("use_rviz")
+    use_dock = LaunchConfiguration("use_dock")
+
 
     # Gazebo 서버·클라이언트
     gazebo_server = IncludeLaunchDescription(
@@ -178,6 +182,13 @@ def generate_launch_description() -> LaunchDescription:
         condition=IfCondition(use_rviz),
     )
 
+    dock_navigator = ExecuteProcess(
+        cmd=["python3", dock_script_path, "--ros-args", "--log-level", "info"],
+        output="screen",
+        condition=IfCondition(use_dock),
+    )
+
+
     # 도킹 스크립트
     dock_navigator = ExecuteProcess(
         cmd=["python3", dock_script_path, "--ros-args", "--log-level", "info"],
@@ -231,6 +242,7 @@ def generate_launch_description() -> LaunchDescription:
     ld.add_action(TimerAction(period=9.7, actions=[spawner_height]))
     ld.add_action(nav2_bringup)
     ld.add_action(rviz_node)
+    ld.add_action(declare_use_dock)
     ld.add_action(dock_navigator)
     ld.add_action(rosbridge)
     ld.add_action(web_video)
