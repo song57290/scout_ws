@@ -80,3 +80,8 @@ colcon build --symlink-install --packages-up-to yolov8_bringup
 go2 부분 urdf도 확인
 -> urdf
 -> 초기위치 => params.yaml
+
+
+PPT 참고
+https://m.blog.naver.com/xiilab/223476760262
+https://iambeginnerdeveloper.tistory.com/279
