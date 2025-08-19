@@ -107,29 +107,6 @@ def generate_launch_description() -> LaunchDescription:
         output="screen",
     )
 
-    manager_ns  = "/controller_manager"
-
-    spawner_js = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["joint_state_broadcaster", "--controller-manager", manager_ns],
-        output="screen",
-    )
-
-    spawner_grip = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["gripper_controller", "--controller-manager", manager_ns, "--param-file", controllers_yaml],
-        output="screen",
-    )
-
-    spawner_height = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["gripper_height_controller", "--controller-manager", manager_ns, "--param-file", controllers_yaml],
-        output="screen",
-    )
-
     nav2_bringup = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(FindPackageShare("nav2_bringup").find("nav2_bringup"), "launch/bringup_launch.py")
@@ -152,6 +129,28 @@ def generate_launch_description() -> LaunchDescription:
         condition=IfCondition(use_rviz),
     )
 
+    manager_ns  = "/controller_manager"
+
+    spawner_js = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["joint_state_broadcaster", "--controller-manager", manager_ns],
+        output="screen",
+    )
+
+    spawner_grip = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["gripper_controller", "--controller-manager", manager_ns, "--param-file", controllers_yaml],
+        output="screen",
+    )
+
+    spawner_height = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["gripper_height_controller", "--controller-manager", manager_ns, "--param-file", controllers_yaml],
+        output="screen",
+    )
 
     dock_navigator = ExecuteProcess(
         cmd=["python3", dock_script_path, "--ros-args", "--log-level", "info"],
@@ -213,8 +212,8 @@ def generate_launch_description() -> LaunchDescription:
     ld.add_action(TimerAction(period=8.0, actions=[spawner_js]))
     ld.add_action(TimerAction(period=9.0, actions=[spawner_grip]))
     ld.add_action(TimerAction(period=9.7, actions=[spawner_height]))
-    ld.add_action(nav2_bringup)
-    ld.add_action(rviz_node)
+    ld.add_action(TimerAction(period=11.0, actions=[nav2_bringup]))
+    ld.add_action(TimerAction(period=14.0, actions=[rviz_node]))
     ld.add_action(dock_navigator)
     ld.add_action(cmd_vel_switch)
     ld.add_action(rosbridge)
