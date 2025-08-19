@@ -5,7 +5,7 @@ from rclpy.node import Node
 from rclpy.duration import Duration
 from std_msgs.msg import Bool
 from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped
-from robot_navigator import BasicNavigator
+from robot_navigator import BasicNavigator ,TaskResult 
 
 class WaypointFollower(Node):
     def __init__(self):
@@ -41,10 +41,10 @@ class WaypointFollower(Node):
             return p
         return [
             mk( 10.0,  4.60, 0.23,  0.97),
-            mk( 14.0, 14.20, 0.707, 0.97),
+            mk( 14.0, 14.20, 0.707, 1.5),
             mk( -5.45, 18.0, 0.92, -0.38),
-            mk( -5.35, 2.10, 0.92,  0.38),
-            mk( 0.0,  0.1, 0.0,   1.0),
+            mk( -5.35, 3.0, 0.92,  0.38),
+            mk( 0.0,  1.0, 0.0,   1.0),
         ]
 
     def cb_mode(self, msg: Bool):
@@ -57,7 +57,8 @@ class WaypointFollower(Node):
         if not self.amcl_ok:
             return
         self.goal_poses = self._build_goals()
-        self.nav.goThroughPoses(self.goal_poses)
+        self.nav.goThroughPoses(self.goal_poses) # self.nav.followWaypoints(self.goal_poses)에서 연속성을 위해 변경
+
         self.running = True
         self.i = 0
         self.nav_start = self.nav.get_clock().now()
@@ -68,10 +69,15 @@ class WaypointFollower(Node):
             return
         if not self.running:
             return
+
         if self.nav.isTaskComplete():
-            _res = self.nav.getResult()
+            res = self.nav.getResult()
             self.running = False
+            # 성공하면 즉시 다음 라운드 시작 (자동 순환)
+            if self.auto and res == TaskResult.SUCCEEDED:
+                self._start_follow()
             return
+
         self.i += 1
         # (피드백/타임아웃 로직은 필요시 추가 유지)
         
