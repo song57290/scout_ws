@@ -9,7 +9,7 @@ from robot_navigator import BasicNavigator
 
 class WaypointFollower(Node):
     def __init__(self):
-        super().__init__('waypoint_follower')
+        super().__init__('waypoint_follower_client')
 
         self.nav = BasicNavigator()
         self.nav.waitUntilNav2Active()
@@ -40,8 +40,8 @@ class WaypointFollower(Node):
             p.pose.orientation.z = oz; p.pose.orientation.w = ow
             return p
         return [
-            mk( 12.0,  4.60, 0.23,  0.97),
-            mk( 15.4, 14.20, 0.707, -0.707),
+            mk( 10.0,  4.60, 0.23,  0.97),
+            mk( 14.0, 14.20, 0.707, 0.97),
             mk( -5.45, 18.0, 0.92, -0.38),
             mk( -5.35, 2.10, 0.92,  0.38),
             mk( 0.0,  0.1, 0.0,   1.0),
@@ -57,7 +57,7 @@ class WaypointFollower(Node):
         if not self.amcl_ok:
             return
         self.goal_poses = self._build_goals()
-        self.nav.followWaypoints(self.goal_poses)
+        self.nav.goThroughPoses(self.goal_poses)
         self.running = True
         self.i = 0
         self.nav_start = self.nav.get_clock().now()

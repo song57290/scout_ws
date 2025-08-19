@@ -17,7 +17,7 @@ source /usr/share/gazebo-11/setup.bash
 ---
 ---
 ```bash
-ros2 launch scout_gazebo_sim office_scout_mini.launch.py
+ros2 launch scout_gazebo_sim office_scout_mini.launch.py use_dock:=true
 ```
 ---
 
