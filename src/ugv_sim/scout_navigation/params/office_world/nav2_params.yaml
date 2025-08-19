@@ -159,8 +159,8 @@ velocity_smoother:
 local_costmap:
   local_costmap:
     ros__parameters:
-      update_frequency: 5.0 
-      publish_frequency: 5.0
+      update_frequency: 1.0 
+      publish_frequency: 2.0
       global_frame: odom
       robot_base_frame: base_link
       use_sim_time: True
@@ -169,7 +169,6 @@ local_costmap:
       height: 10
       resolution: 0.05
       robot_radius: 0.35 # 0.85
-      transform_tolerance: 0.5    # (수정)
       plugins: ["voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
@@ -187,13 +186,14 @@ local_costmap:
         observation_sources: scan
         scan:
           topic: /scan
-          data_type: "LaserScan"
+          max_obstacle_height: 2.0
           clearing: True
           marking: True
-          expected_update_rate: 0.20
-          observation_persistence: 0.30
-          queue_size: 100
-          inf_is_valid: true
+          data_type: "LaserScan"
+          raytrace_max_range: 10.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 9.5
+          obstacle_min_range: 0.0
       static_layer:
         map_subscribe_transient_local: True
       always_send_full_costmap: True
@@ -207,15 +207,14 @@ local_costmap:
 global_costmap:
   global_costmap:
     ros__parameters:
-      update_frequency: 5.0
-      publish_frequency: 5.0
+      update_frequency: 1.0
+      publish_frequency: 1.0
       global_frame: map
       robot_base_frame: base_link
       use_sim_time: True
       robot_radius: 0.35 # 0.85
       resolution: 0.05
       track_unknown_space: true
-      transform_tolerance: 0.5    # (수정)
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
@@ -223,13 +222,10 @@ global_costmap:
         observation_sources: scan
         scan:
           topic: /scan
-          data_type: "LaserScan"
+          max_obstacle_height: 2.0
           clearing: True
           marking: True
-          expected_update_rate: 0.20
-          observation_persistence: 0.30
-          queue_size: 100
-          inf_is_valid: true
+          data_type: "LaserScan"
           raytrace_max_range: 10.0
           raytrace_min_range: 0.0
           obstacle_max_range: 9.5

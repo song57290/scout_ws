@@ -3,15 +3,21 @@ import math
 import rclpy
 from rclpy.node import Node
 from rclpy.duration import Duration
+from rclpy.parameter import Parameter
+from rclpy.time import Time
 from std_msgs.msg import Bool
 from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped
-from robot_navigator import BasicNavigator ,TaskResult 
+from robot_navigator import BasicNavigator ,TaskResult
+ 
 
 class WaypointFollower(Node):
     def __init__(self):
         super().__init__('waypoint_follower_client')
 
+        self.set_parameters([Parameter('use_sim_time', Parameter.Type.BOOL, True)])
         self.nav = BasicNavigator()
+
+        self.nav.set_parameters([Parameter('use_sim_time', Parameter.Type.BOOL, True)])
         self.nav.waitUntilNav2Active()
 
         self.auto = False
@@ -31,20 +37,22 @@ class WaypointFollower(Node):
         self.amcl_ok = True
 
     def _build_goals(self):
-        def mk(x,y,oz,ow):
+        def mk(x, y, oz, ow):
             p = PoseStamped()
             p.header.frame_id = 'map'
-            p.header.stamp = self.nav.get_clock().now().to_msg()
+            # ★ 0 타임스탬프(= 최신 TF 사용)
+            p.header.stamp = Time().to_msg()
             p.pose.position.x = x; p.pose.position.y = y; p.pose.position.z = 0.0
             p.pose.orientation.x = 0.0; p.pose.orientation.y = 0.0
             p.pose.orientation.z = oz; p.pose.orientation.w = ow
             return p
         return [
-            mk( 10.0,  4.60, 0.23,  0.97),
-            mk( 14.0, 14.20, 0.707, 1.5),
-            mk( -5.45, 18.0, 0.92, -0.38),
-            mk( -5.35, 3.0, 0.92,  0.38),
-            mk( 0.0,  1.0, 0.0,   1.0),
+            mk( 11.0, 4.8, 0.42,  0.9),
+            mk( 12.0, 9.5, 0.69, 0.72),
+            mk( 18.8, 14.4, -0.01, -0.99),
+            mk( -3.76, 18.2, -0.97, 0.21),
+            mk( -5.2, 3.8, -0.63, 0.77),
+            mk( 0.0,  1.0, 0.34, 0.93),
         ]
 
     def cb_mode(self, msg: Bool):
