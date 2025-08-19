@@ -148,8 +148,10 @@ def generate_launch_description() -> LaunchDescription:
         name="rviz2",
         arguments=["-d", rviz_config],
         output="screen",
+        parameters=[{"use_sim_time": use_sim_time}],
         condition=IfCondition(use_rviz),
     )
+
 
     dock_navigator = ExecuteProcess(
         cmd=["python3", dock_script_path, "--ros-args", "--log-level", "info"],

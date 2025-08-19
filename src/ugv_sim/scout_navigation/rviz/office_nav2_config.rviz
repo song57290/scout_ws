@@ -6,6 +6,9 @@ Panels:
       Expanded:
         - /TF1/Frames1
         - /TF1/Tree1
+        - /LaserScan1
+        - /LaserScan1/Status1
+        - /LaserScan1/Topic1
         - /Global Planner1/Global Costmap1
         - /Global Planner1/Path1
         - /Controller1/Local Costmap1
@@ -55,6 +58,8 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
+        arm_vertical:
+          Value: true
         base_footprint:
           Value: true
         base_link:
@@ -79,6 +84,8 @@ Visualization Manager:
           Value: true
         left_finger:
           Value: true
+        left_finger_stopper:
+          Value: true
         map:
           Value: true
         odom:
@@ -88,6 +95,8 @@ Visualization Manager:
         rear_right_wheel_link:
           Value: true
         right_finger:
+          Value: true
+        right_finger_stopper:
           Value: true
         velodyne:
           Value: true
@@ -112,11 +121,14 @@ Visualization Manager:
                 {}
               gripper_connecter:
                 gripper_arm:
-                  gripper_base:
-                    left_finger:
-                      {}
-                    right_finger:
-                      {}
+                  arm_vertical:
+                    gripper_base:
+                      left_finger:
+                        left_finger_stopper:
+                          {}
+                      right_finger:
+                        right_finger_stopper:
+                          {}
               inertial_link:
                 {}
               rear_left_wheel_link:
@@ -162,7 +174,7 @@ Visualization Manager:
       Topic:
         Depth: 5
         Durability Policy: Volatile
-        Filter size: 10
+        Filter size: 100
         History Policy: Keep Last
         Reliability Policy: Best Effort
         Value: /scan
@@ -339,6 +351,11 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        arm_vertical:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         base_footprint:
           Alpha: 1
           Show Axes: false
@@ -397,6 +414,11 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        left_finger_stopper:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         rear_left_wheel_link:
           Alpha: 1
           Show Axes: false
@@ -408,6 +430,11 @@ Visualization Manager:
           Show Trail: false
           Value: true
         right_finger:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        right_finger_stopper:
           Alpha: 1
           Show Axes: false
           Show Trail: false
