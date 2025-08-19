@@ -12,38 +12,18 @@ class WaypointFollower(Node):
         self.nav.waitUntilNav2Active()
         self.auto = False
         self.running = False
-        self.amcl_ok = False
-        self.goal_poses = self._build_goals()
-        self.reset_pose = self._mk_pose_xy_q(0.0, 1.0, 0.0, 0.0, 0.0, 1.0)
+        self.have_pose = False
+        self.current_pose = None
+        self.goals = self._build_goals()
         self.sub_mode = self.create_subscription(Bool, '/auto_mode', self.cb_mode, 10)
         self.sub_amcl = self.create_subscription(PoseWithCovarianceStamped, '/amcl_pose', self.cb_amcl, 10)
         self.timer = self.create_timer(0.1, self.tick)
 
-    def cb_amcl(self, _msg: PoseWithCovarianceStamped):
-        self.amcl_ok = True
-
-    def _mk_pose_xy_q(self, x, y, qx, qy, qz, qw, frame_id='map'):
-        p = PoseStamped()
-        p.header.frame_id = frame_id
-        p.header.stamp = self.nav.get_clock().now().to_msg()
-        p.pose.position.x = x
-        p.pose.position.y = y
-        p.pose.position.z = 0.0
-        p.pose.orientation.x = qx
-        p.pose.orientation.y = qy
-        p.pose.orientation.z = qz
-        p.pose.orientation.w = qw
-        return p
-
-    def _build_goals(self):
-        mk = self._mk_pose_xy_q
-        return [
-            mk(9.8, 4.3, 0.0, 0.0, 0.0, 0.99),
-            mk(12.0, 5.97, 0.0, 0.0, 0.707, 0.707),
-            mk(18.6, 13.7, 0.0, 0.0, 0.707, 0.707),
-            mk(-3.8, 18.1, 0.0, 0.0, 0.99, 0.01),
-            mk(-5.2, 3.8, 0.0, 0.0, -0.63, 0.77),
-        ]
+    def cb_amcl(self, msg: PoseWithCovarianceStamped):
+        self.current_pose = PoseStamped()
+        self.current_pose.header = msg.header
+        self.current_pose.pose = msg.pose.pose
+        self.have_pose = True
 
     def cb_mode(self, msg: Bool):
         self.auto = bool(msg.data)
@@ -51,21 +31,41 @@ class WaypointFollower(Node):
             self.nav.cancelTask()
             self.running = False
 
-    def _go_to_pose_blocking(self, pose: PoseStamped):
-        if not self.nav.goToPose(pose):
-            return TaskResult.FAILED
-        while not self.nav.isTaskComplete():
-            rclpy.spin_once(self, timeout_sec=0.1)
-        return self.nav.getResult()
+    def _build_goals(self):
+        def mk(x, y, oz, ow):
+            p = PoseStamped()
+            p.header.frame_id = 'map'
+            p.header.stamp = self.nav.get_clock().now().to_msg()
+            p.pose.position.x = x
+            p.pose.position.y = y
+            p.pose.orientation.z = oz
+            p.pose.orientation.w = ow
+            return p
+        return [
+            mk(3.2,  3.51, 0.23,  0.97),
+            mk(10.0,  4.60, 0.23,  0.9),
+            mk(16.7, 14.4, 0.0, 0.99),
+            mk(-5.45, 18.0, 0.92, -0.38),
+            mk(-5.35,  3.0, 0.92,  0.38),
+        ]
+
+    def _dist2(self, a: PoseStamped, b: PoseStamped):
+        dx = a.pose.position.x - b.pose.position.x
+        dy = a.pose.position.y - b.pose.position.y
+        return dx*dx + dy*dy
+
+    def _ordered_from_nearest(self):
+        goals = self._build_goals()
+        if not self.have_pose:
+            return goals
+        i0 = min(range(len(goals)), key=lambda i: self._dist2(goals[i], self.current_pose))
+        return goals[i0:] + goals[:i0]
 
     def _start_follow(self):
-        if not self.amcl_ok:
+        if not self.have_pose:
             return
-        r = self._go_to_pose_blocking(self.reset_pose)
-        if r != TaskResult.SUCCEEDED:
-            return
-        self.goal_poses = self._build_goals()
-        if not self.nav.goThroughPoses(self.goal_poses):
+        ordered = self._ordered_from_nearest()
+        if not self.nav.goThroughPoses(ordered):
             return
         self.running = True
 
@@ -79,9 +79,7 @@ class WaypointFollower(Node):
             res = self.nav.getResult()
             self.running = False
             if self.auto and res == TaskResult.SUCCEEDED:
-                r = self._go_to_pose_blocking(self.reset_pose)
-                if self.auto and r == TaskResult.SUCCEEDED:
-                    self._start_follow()
+                self._start_follow()
 
 def main():
     rclpy.init()
