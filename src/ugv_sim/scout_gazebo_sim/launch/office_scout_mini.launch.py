@@ -34,6 +34,7 @@ def generate_launch_description():
     map_yaml_default    = os.path.join(nav_share, "maps/office_world/office_world.yaml")
     nav2_params_default = os.path.join(nav_share, "params/office_world/nav2_params.yaml")
     rviz_config_default = os.path.join(nav_share, "rviz/office_nav2_config.rviz")
+    ekf_params_default  = os.path.join(gazebo_share, "config/ekf.yaml")
 
     os.environ["GAZEBO_MODEL_PATH"] = os.path.join(gazebo_share, "models")
 
@@ -49,6 +50,8 @@ def generate_launch_description():
     declare_rviz_config  = DeclareLaunchArgument("rviz_config", default_value=rviz_config_default)
     declare_use_rviz     = DeclareLaunchArgument("use_rviz", default_value="true")
     declare_use_dock     = DeclareLaunchArgument("use_dock", default_value="false")
+    declare_ekf_params   = DeclareLaunchArgument("ekf_params", default_value=ekf_params_default)
+    
 
     use_sim_time = LaunchConfiguration("use_sim_time")
     gui          = LaunchConfiguration("gui")
@@ -62,6 +65,7 @@ def generate_launch_description():
     rviz_config  = LaunchConfiguration("rviz_config")
     use_rviz     = LaunchConfiguration("use_rviz")
     use_dock     = LaunchConfiguration("use_dock")
+    ekf_params   = LaunchConfiguration("ekf_params")
 
     gazebo_server = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -105,6 +109,14 @@ def generate_launch_description():
             "-Y",      spawn_yaw,
         ],
         output="screen",
+    )
+
+    ekf_node = Node(
+        package="robot_localization",
+        executable="ekf_node",
+        name="ekf_filter_node",
+        output="screen",
+        parameters=[ekf_params, {"use_sim_time": use_sim_time}],
     )
 
     nav2_bringup = IncludeLaunchDescription(
@@ -203,6 +215,7 @@ def generate_launch_description():
     ld.add_action(declare_rviz_config)
     ld.add_action(declare_use_rviz)
     ld.add_action(declare_use_dock)
+    ld.add_action(declare_ekf_params)
 
     ld.add_action(gazebo_server)
     ld.add_action(gazebo_client)
@@ -212,6 +225,7 @@ def generate_launch_description():
     ld.add_action(TimerAction(period=8.0, actions=[spawner_js]))
     ld.add_action(TimerAction(period=9.0, actions=[spawner_grip]))
     ld.add_action(TimerAction(period=9.7, actions=[spawner_height]))
+    ld.add_action(TimerAction(period=10.5, actions=[ekf_node]))
     ld.add_action(TimerAction(period=11.0, actions=[nav2_bringup]))
     ld.add_action(TimerAction(period=14.0, actions=[rviz_node]))
     ld.add_action(dock_navigator)

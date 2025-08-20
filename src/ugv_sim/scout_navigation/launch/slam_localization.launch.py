@@ -11,7 +11,8 @@ def generate_launch_description():
     pkg_name = "scout_navigation"
     
     namespace = LaunchConfiguration("namespace", default="/scout_mini")
-    use_sim_time = LaunchConfiguration("use_sim_time", default="true")slam_params_file = LaunchConfiguration("slam_params_file", default="mapper_params_localization.yaml")
+    use_sim_time = LaunchConfiguration("use_sim_time", default="true")
+    slam_params_file = LaunchConfiguration("slam_params_file", default="mapper_params_localization.yaml")
     map_file_name = LaunchConfiguration("map_file_name", default="tmp_map")
     
     declare_namespace_arg = DeclareLaunchArgument(
