@@ -6,7 +6,7 @@ amcl:
     alpha3: 0.002
     alpha4: 0.002
     alpha5: 0.002
-    base_frame_id: "base_link"
+    base_frame_id: "gripper_connecter"
     beam_skip_distance: 0.5
     beam_skip_error_threshold: 0.9
     beam_skip_threshold: 0.3
@@ -53,7 +53,7 @@ bt_navigator:
   ros__parameters:
     use_sim_time: True
     global_frame: map
-    robot_base_frame: base_link
+    robot_base_frame: gripper_connecter
     odom_topic: /odometry/filtered #/wheel/odometry
     bt_loop_duration: 10
     default_server_timeout: 20
@@ -136,7 +136,7 @@ controller_server:
       primary_controller: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
       angular_dist_threshold: 0.785
       forward_sampling_distance: 0.5
-      rotate_to_heading_angular_vel: 1.8   #rotate할 속도
+      rotate_to_heading_angular_vel: 1.8   # rotate 속도
       max_angular_accel: 3.2
       simulate_ahead_time: 1.0
 
@@ -162,19 +162,19 @@ local_costmap:
       update_frequency: 10.0 
       publish_frequency: 10.0
       global_frame: odom
-      robot_base_frame: base_link
+      robot_base_frame: gripper_connecter
       transform_tolerance: 0.30
       use_sim_time: True
       rolling_window: true
       width: 10
       height: 10
       resolution: 0.05
-      robot_radius: 0.35 # 0.85
+      robot_radius: 0.25 # 0.85
       plugins: ["voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0 # 작을 수록 멀리 퍼짐
-        inflation_radius: 0.50 # 로봇 반경
+        cost_scaling_factor: 2.0 # 작을 수록 멀리 퍼짐
+        inflation_radius: 0.40 # 로봇 반경
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -211,10 +211,10 @@ global_costmap:
       update_frequency: 10.0
       publish_frequency: 10.0
       global_frame: map
-      robot_base_frame: base_link
+      robot_base_frame: gripper_connecter
       transform_tolerance: 0.30
       use_sim_time: True
-      robot_radius: 0.35 # 0.85
+      robot_radius: 0.25 # 0.85
       resolution: 0.05
       track_unknown_space: true
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
@@ -237,8 +237,8 @@ global_costmap:
         map_subscribe_transient_local: True
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0 # 작을 수록 멀리 퍼짐
-        inflation_radius: 0.50 # 로봇 반경
+        cost_scaling_factor: 2.0 # 작을 수록 멀리 퍼짐
+        inflation_radius: 0.40 # 로봇 반경
       always_send_full_costmap: True
   global_costmap_client:
     ros__parameters:
@@ -288,7 +288,7 @@ recoveries_server:
     wait:
       plugin: "nav2_recoveries/Wait"
     global_frame: odom
-    robot_base_frame: base_link
+    robot_base_frame: gripper_connecter
     transform_timeout: 0.1
     use_sim_time: true
     simulate_ahead_time: 2.0
@@ -324,7 +324,7 @@ slam_toolbox:
     # ROS Parameters
     odom_frame: odom
     map_frame: map
-    base_frame: base_link
+    base_frame: gripper_connecter
     scan_topic: /scan
     mode: mapping #localization
 

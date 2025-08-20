@@ -47,6 +47,7 @@ class WaypointFollower(Node):
             mk(16.7, 14.4, 0.0, 0.99),
             mk(-3.15, 18.5, -0.95, 0.3),
             mk(-5.35,  3.0, 0.92,  0.38),
+            mk(-1.46,  1.35, 0.17,  0.98),
         ]
 
     def _dist2(self, a: PoseStamped, b: PoseStamped):
@@ -60,14 +61,23 @@ class WaypointFollower(Node):
             return goals
         i0 = min(range(len(goals)), key=lambda i: self._dist2(goals[i], self.current_pose))
         return goals[i0:] + goals[:i0]
-
+    
     def _start_follow(self):
         if not self.have_pose:
             return
-        ordered = self._ordered_from_nearest()
+        ordered = self._build_goals()
         if not self.nav.goThroughPoses(ordered):
             return
         self.running = True
+
+    # waypoint를 순서대로 사용하고 싶으면 이걸 사용
+    # def _start_follow(self):
+    #     if not self.have_pose:
+    #         return
+    #     ordered = self._ordered_from_nearest()
+    #     if not self.nav.goThroughPoses(ordered):
+    #         return
+    #     self.running = True
 
     def tick(self):
         if self.auto and not self.running:
