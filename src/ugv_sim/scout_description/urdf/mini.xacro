@@ -28,7 +28,7 @@
 
     <xacro:property name="wheelbase" value="0.463951"/>
     <xacro:property name="track" value="0.416503"/>
-    <xacro:property name="wheel_vertical_offset" value="-0.100998" />
+    <xacro:property name="wheel_vertical_offset" value="-0.077" />
 
 <!--    <xacro:property name="track" value="0.3426" />
     <xacro:property name="wheelbase" value="0.3181"/>

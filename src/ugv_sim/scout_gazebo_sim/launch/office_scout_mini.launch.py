@@ -13,7 +13,7 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 
-def generate_launch_description() -> LaunchDescription:
+def generate_launch_description():
     description_pkg = "scout_description"
     gazebo_pkg      = "scout_gazebo_sim"
     nav_pkg         = "scout_navigation"
