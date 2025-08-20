@@ -1,5 +1,5 @@
 #! /usr/bin/env python3
-import rclpy
+import rclpy, math
 from rclpy.node import Node
 from std_msgs.msg import Bool
 from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped
@@ -32,43 +32,60 @@ class WaypointFollower(Node):
             self.running = False
 
     def _build_goals(self):
-        def mk(x, y, oz, ow):
+        pts = [
+            (4.35,  3.7),
+            (9.3,   4.58),
+            (16.7, 14.4),
+            (-3.15, 18.5),
+            (-5.35, 3.0),
+            (-1.46, 1.35),
+        ]
+        goals = []
+        n = len(pts)
+        now = self.nav.get_clock().now().to_msg()
+        for i, (x, y) in enumerate(pts):
+            nx, ny = pts[(i + 1) % n]
+            yaw = math.atan2(ny - y, nx - x)
+            oz = math.sin(yaw / 2.0)
+            ow = math.cos(yaw / 2.0)
             p = PoseStamped()
             p.header.frame_id = 'map'
-            p.header.stamp = self.nav.get_clock().now().to_msg()
+            p.header.stamp = now
             p.pose.position.x = x
             p.pose.position.y = y
             p.pose.orientation.z = oz
             p.pose.orientation.w = ow
-            return p
-        return [
-            mk(4.35,  3.7, 0.277,  0.99),
-            mk(9.3,  4.58, 0.168,  0.98),
-            mk(16.7, 14.4, 0.0, 0.99),
-            mk(-3.15, 18.5, -0.95, 0.3),
-            mk(-5.35,  3.0, 0.92,  0.38),
-            mk(-1.46,  1.35, 0.17,  0.98),
-        ]
+            goals.append(p)
+        return goals
 
     def _dist2(self, a: PoseStamped, b: PoseStamped):
         dx = a.pose.position.x - b.pose.position.x
         dy = a.pose.position.y - b.pose.position.y
         return dx*dx + dy*dy
 
-    def _ordered_from_nearest(self):
+    def _ordered_skip_current(self, tol=0.5):
         goals = self._build_goals()
-        if not self.have_pose:
+        n = len(goals)
+        if not self.have_pose or n == 0:
             return goals
-        i0 = min(range(len(goals)), key=lambda i: self._dist2(goals[i], self.current_pose))
-        return goals[i0:] + goals[:i0]
-    
+        # 현재와 가장 가까운 인덱스
+        i_cur = min(range(n), key=lambda i: self._dist2(goals[i], self.current_pose))
+        # 현재에 충분히 가까우면 그 포인트는 제외하고, 다음 포인트부터 n-1개만 사용
+        if self._dist2(goals[i_cur], self.current_pose) <= tol * tol:
+            return [goals[(i_cur + k) % n] for k in range(1, n)]  # 현재(i_cur)는 제외
+        # 멀리 있으면 전체를 i_cur부터 시작 (마지막이 현재가 아님)
+        return goals[i_cur:] + goals[:i_cur]
+
     def _start_follow(self):
         if not self.have_pose:
             return
-        ordered = self._build_goals()
+        ordered = self._ordered_skip_current(tol=0.5)
+        if not ordered:  # 안전장치
+            return
         if not self.nav.goThroughPoses(ordered):
             return
         self.running = True
+
 
     # waypoint를 순서대로 사용하고 싶으면 이걸 사용
     # def _start_follow(self):
