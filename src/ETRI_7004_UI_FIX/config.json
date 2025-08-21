@@ -33,7 +33,7 @@
         "lidar2d": "/scan",
         "cmdVel": "/cmd_vel",
         "robotPose": "/amcl_pose",
-        "camera": "/camera/image_raw/compressed",
+        "camera": "/yolo/annotated_image/compressed",
         "rtsp": {
           "RTSP_URL": "rtsp://admin:disaster@192.168.0.21/stream1",
           "onvif_host": "192.168.0.21",
