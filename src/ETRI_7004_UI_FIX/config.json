@@ -33,7 +33,7 @@
         "lidar2d": "/scan",
         "cmdVel": "/cmd_vel",
         "robotPose": "/amcl_pose",
-        "camera": "/yolo/annotated_image/compressed",
+        "camera": "/camera/image_raw/compressed",
         "rtsp": {
           "RTSP_URL": "rtsp://admin:disaster@192.168.0.21/stream1",
           "onvif_host": "192.168.0.21",
@@ -44,7 +44,7 @@
         "map": {
           "imagePath": "./maps/office_world.jpg",
           "orientation": {
-            "x": "-9.8",
+            "x": "-10.3",
             "y": "-17.5"
           },
           "resolution": "0.05",

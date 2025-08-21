@@ -35,7 +35,7 @@ MAX_DET = 1000
 LINE_THICKNESS = 3
 HIDE_LABELS = False
 HIDE_CONF = False
-USE_FP16 = False                                        # GPU에서만 의미
+USE_FP16 = True                                        # GPU에서만 의미
 CONF_NOTIFY = 0.60                                      # 알림 임계값
 JPEG_QUALITY = 90                                       # 퍼블리시 JPEG 품질(0~100)
 
