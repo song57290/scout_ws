@@ -72,7 +72,7 @@ class WaypointFollower(Node):
         i_cur = min(range(n), key=lambda i: self._dist2(goals[i], self.current_pose))
         # 현재에 충분히 가까우면 그 포인트는 제외하고, 다음 포인트부터 n-1개만 사용
         if self._dist2(goals[i_cur], self.current_pose) <= tol * tol:
-            return [goals[(i_cur + k) % n] for k in range(1, n)]  # 현재(i_cur)는 제외
+            return [goals[(i_cur + k) % n] for k in range(1, n)]  # 현재 point는 제외
         # 멀리 있으면 전체를 i_cur부터 시작 (마지막이 현재가 아님)
         return goals[i_cur:] + goals[:i_cur]
 
@@ -97,6 +97,13 @@ class WaypointFollower(Node):
     #     self.running = True
 
     def tick(self):
+        # auto가 꺼져 있으면 출발 X
+        if not self.auto:
+            if self.running:
+                self.nav.cancelTask()
+                self.running = False
+            return
+
         if self.auto and not self.running:
             self._start_follow()
             return
@@ -107,6 +114,7 @@ class WaypointFollower(Node):
             self.running = False
             if self.auto and res == TaskResult.SUCCEEDED:
                 self._start_follow()
+
 
 def main():
     rclpy.init()

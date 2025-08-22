@@ -21,10 +21,18 @@ ros2 launch scout_gazebo_sim office_scout_mini.launch.py use_dock:=true
 ```
 ---
 
-
-## 2. YOLO v5 실행
-
+## 2. 조이스틱 제어
 # Terminal 2
+---
+```bash
+cd ~/scout_ws/src/ETRI_7004_UI_FIX
+npm start
+```
+---
+
+## 3. YOLO v5 실행
+
+# Terminal 3
 ---
 ```bash
 cd ~/scout_ws
@@ -37,13 +45,25 @@ cd src/ugv_sim/scout_yolov5/scripts/
 python yolo_fire_detection.py
 ```
 
-## 3. 조이스틱 제어
----
+# Terminal 4
 ```bash
-cd ~/scout_ws/src/ETRI_7004_UI_FIX
-npm start
+ros2 topic echo /fire/robot_pose
 ```
----
+
+# Terminal 5
+```bash
+ros2 topic echo /fire/approach_goal
+```
+
+# Terminal 6
+```bash
+ros2 topic info /auto_mode
+```
+# Terminal 
+```bash
+ros2 topic echo /auto_mode
+```
+
 
 ## 4. gzserver & gzclient 확인
 ---
