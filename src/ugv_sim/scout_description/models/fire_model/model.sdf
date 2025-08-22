@@ -6,7 +6,7 @@
       <collision name="collision">
         <geometry>
           <mesh>
-            <scale>2 2 2</scale>
+            <scale>1 1 1</scale>
             <uri>model://fire_model/meshes/fire2.dae</uri>
           </mesh>
         </geometry>
@@ -22,7 +22,7 @@
       <visual name="visual">
         <geometry>
           <mesh>
-            <scale>3.5 1 4</scale>
+            <scale>1 1 1</scale>
             <uri>model://fire_model/meshes/fire2.dae</uri>
           </mesh>
         </geometry>

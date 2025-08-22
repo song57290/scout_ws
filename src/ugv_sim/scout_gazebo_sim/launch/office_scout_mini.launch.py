@@ -196,7 +196,7 @@ def generate_launch_description():
         name='web_video_server',
         output='screen',
         parameters=[{
-            'ros_topic': '/depth_camera/image_raw',
+            'ros_topic': 'camera/image_raw',
             'image_transport': 'compressed'
         }]
     )

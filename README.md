@@ -101,9 +101,17 @@ YOLOv5 🚀 2025-8-11 Python-3.10.12 torch-2.5.1+cu121 CUDA:0 (NVIDIA GeForce RT
   ckpt = torch.load(attempt_download(w), map_location='cpu')  # load
 Fusing layers... 
 Model summary: 213 layers, 7012822 parameters, 0 gradients, 15.8 GFLOPs
-[INFO]: Subscribed to image topic: /camera/image_raw
-[INFO]: Publishing annotated to: /yolo/annotated_image/compressed
-[INFO]: Using device: cuda:0
+[INFO]: [INFO]: RGB topic:   /camera/image_raw
+[INFO]: [INFO]: DEPTH topic: /depth_camera/depth/image_raw
+[INFO]: [INFO]: INFO topic:  /depth_camera/depth/camera_info
+[INFO]: [INFO]: Annotated out: /fire/annotated_image/compressed
+[INFO]: [INFO]: Using device: cuda:0
+[WARN]: [WARN]: No valid depth/intrinsics yet — 3D position will publish once ready.
+[INFO]: 
+==============================================
+Fire detected! Notification sent to the owner
+==============================================
+
 
 
 이렇게 출력 나오고 사진처럼 떠야함

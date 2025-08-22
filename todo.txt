@@ -1,28 +1,6 @@
 depth\_camera → YOLO → 3D 좌표화 노드 → 순찰/정지 제어 → 코디네이터 → 런치 통합
 
 ---
-
-# 0단계. 현 상태 점검 (1분)
-
-수정 들어가기 전에 현재 토픽/TF가 어떻게 떠있는지 한 번 찍어두면, 나중에 문제 생겼을 때 되돌리기 쉽다.
-
-ros2 topic list | sort
-ros2 run tf2_tools view_frames
-
-# 1단계. `depth_camera.xacro` 수정 (RGB/Depth 토픽 정리 + optical frame 추가)
-
-## 1-1. 플러그인 교체 & 토픽 분리
-
-**어디를 바꾸나?**
-지금 `<plugin filename="libgazebo_ros_camera.so">` 로 되어 있는데, **깊이 카메라 전용 플러그인**으로 바꿔야 depth 이미지/포인트클라우드가 정상적으로 나온다.
-
-# 2단계. YOLO 노드 입력 토픽 교체 + “불 감지” 이벤트 퍼블리시
-
-## 2-1. 입력 RGB 토픽 교체
-
-**어디를 바꾸나?**
-YOLO 스크립트에서 구독하는 이미지 토픽(보통 상단 상수나 생성자 인자)을 **`/depth_camera/image_raw`** 로 변경. (Gazebo 렌더 카메라의 RGB)
-
 ```python
 # yolo_fire_detection.py 상단 근처
 IMAGE_TOPIC = '/depth_camera/image_raw'
