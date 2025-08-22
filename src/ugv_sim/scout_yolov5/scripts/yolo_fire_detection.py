@@ -6,7 +6,7 @@ import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
 
-from std_msgs.msg import Bool, Float64, Float64MultiArray
+from std_msgs.msg import Bool
 from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped, Twist
 from sensor_msgs.msg import Image, CompressedImage, CameraInfo
 from action_msgs.msg import GoalStatusArray
@@ -41,9 +41,9 @@ INFO_TOPIC  = '/depth_camera/depth/camera_info'
 ANNOTATED_COMPRESSED_TOPIC = '/fire/annotated_image/compressed'
 FIRE_DETECTED_TOPIC        = '/fire/detected'
 FIRE_ROBOT_POSE_TOPIC      = '/fire/robot_pose'
-FIRE_APPROACH_GOAL_TOPIC   = '/fire/approach_goal'
-RECALL_ACTIVE_TOPIC        = '/recall_active'          # NEW: 리콜 상태(라치)
-NAV_WAKE_TOPIC             = '/cmd_vel_nav'            # cmd_vel 스위치 웨이크업용
+FIRE_APPROACH_GOAL_TOPIC   = '/fire/approach_goal'   # (옵션) 첫 번째 복귀(goal) 브로드캐스트
+RECALL_ACTIVE_TOPIC        = '/recall_active'        # 라치
+NAV_WAKE_TOPIC             = '/cmd_vel_nav'          # cmd_vel 스위치 웨이크업용
 
 # --- YOLO params ---
 WEIGHTS  = 'best.pt'
@@ -61,7 +61,7 @@ JPEG_QUALITY = 90
 
 # --- Recall params ---
 RECALL_ON_FIRE     = True
-RECALL_XYZ_YAW     = (13, 3.54, 0.0)   # map 좌표 (x,y,yaw)
+RECALL_XYZ_YAW     = (12.9, 3.54, 0.0)   # 소화기 위치(map 좌표 x,y,yaw)
 RECALL_COOLDOWN_S  = 10.0
 
 # 웨이크업(joy→nav 선택 유도)
@@ -84,9 +84,12 @@ class FireNode(Node):
         self.have_amcl = False
         self.amcl_pose = None
 
+        # 화재 순간 pose 저장 (back-to-fire용)
+        self._last_fire_pose: PoseStamped | None = None
+
         # Recall FSM
         self.recall_active = False
-        self.recall_state  = 'idle'
+        self.recall_state  = 'idle'  # idle -> canceling -> sending_ext -> tracking_ext -> sending_back -> tracking_back -> idle
         self._last_recall_ns = 0
         self._recall_cancel_sent = False
         self._cancel_first_time_ns = 0
@@ -125,8 +128,8 @@ class FireNode(Node):
         self.pub_auto  = self.create_publisher(Bool, '/auto_mode', latched_qos)     # 라치
         self.pub_goal  = self.create_publisher(PoseStamped, FIRE_APPROACH_GOAL_TOPIC, 10)
         self.pub_robot_pose = self.create_publisher(PoseStamped, FIRE_ROBOT_POSE_TOPIC, 10)
-        self.pub_recall = self.create_publisher(Bool, RECALL_ACTIVE_TOPIC, latched_qos)  # NEW 라치
-        self.pub_nav_wake = self.create_publisher(Twist, NAV_WAKE_TOPIC, 10)             # NEW 웨이크업
+        self.pub_recall = self.create_publisher(Bool, RECALL_ACTIVE_TOPIC, latched_qos)  # 라치
+        self.pub_nav_wake = self.create_publisher(Twist, NAV_WAKE_TOPIC, 10)             # 웨이크업
 
         # Nav2
         if _HAS_NAV2:
@@ -267,6 +270,9 @@ class FireNode(Node):
         if (now_ns - self._last_recall_ns) < RECALL_COOLDOWN_S * 1e9:
             return
 
+        # 감지 순간 로봇 포즈 공개 + 내부 저장
+        self._publish_and_store_fire_pose()
+
         # 상태 초기화
         self._last_recall_ns = now_ns
         self.recall_active = True
@@ -275,13 +281,10 @@ class FireNode(Node):
         self._debug_status_logged = False
         self._last_goal_send_ns = 0
         self._goal_sent_once = False
-        self.get_logger().info('[RECALL] Triggered. CancelAll then return to (1,3,0).')
+        self.get_logger().info(f'[RECALL] Triggered. CancelAll then go to extinguisher at {RECALL_XYZ_YAW}.')
 
         # 리콜 상태 알림 (라치 True)
         self.pub_recall.publish(Bool(data=True))
-
-        # 감지 순간 로봇 포즈 공개
-        self._publish_robot_pose()
 
     def _recall_tick(self):
         if not self.recall_active or self.nav is None:
@@ -317,63 +320,98 @@ class FireNode(Node):
             grace_passed = elapsed_grace >= self.CANCEL_GRACE_SEC
 
             if all_idle_seen or no_status_topics or grace_passed:
-                self.recall_state = 'sending'
+                self.recall_state = 'sending_ext'
                 try: self.nav.cancelTask()
                 except Exception: pass
             else:
                 return
 
-        # 2) sending
-        gx, gy, gyaw = RECALL_XYZ_YAW
-        gz, gw = math.sin(gyaw/2.0), math.cos(gyaw/2.0)
+        # 2) sending_ext: 소화기 위치로 이동
+        if self.recall_state == 'sending_ext':
+            gx, gy, gyaw = RECALL_XYZ_YAW
+            gz, gw = math.sin(gyaw/2.0), math.cos(gyaw/2.0)
 
-        goal = PoseStamped()
-        goal.header.frame_id = 'map'
-        goal.header.stamp = self.get_clock().now().to_msg()
-        goal.pose.position.x = gx
-        goal.pose.position.y = gy
-        goal.pose.orientation.z = gz
-        goal.pose.orientation.w = gw
+            goal = PoseStamped()
+            goal.header.frame_id = 'map'
+            goal.header.stamp = self.get_clock().now().to_msg()
+            goal.pose.position.x = gx
+            goal.pose.position.y = gy
+            goal.pose.orientation.z = gz
+            goal.pose.orientation.w = gw
 
-        if self.recall_state == 'sending':
             try: self.nav.clearLocalCostmap()
             except Exception: pass
             try: self.nav.clearGlobalCostmap()
             except Exception: pass
 
-            self.get_logger().info(f'[RECALL] goToPose -> ({gx:.2f}, {gy:.2f}, yaw={gyaw:.1f})')
+            self.get_logger().info(f'[RECALL] goToPose (extinguisher) -> ({gx:.2f}, {gy:.2f}, yaw={gyaw:.2f})')
             try:
                 self.nav.goToPose(goal)
-                self.recall_state = 'tracking'
+                self.recall_state = 'tracking_ext'
                 self._last_goal_send_ns = self.get_clock().now().nanoseconds
                 self._goal_sent_once = True
             except Exception as e:
-                self.get_logger().warn(f'[RECALL] goToPose error: {e}')
+                self.get_logger().warn(f'[RECALL] goToPose(ext) error: {e}')
                 return
 
             self.pub_goal.publish(goal)
-
-            # ★ 웨이크업: joy가 0값을 계속 쏘아도 nav가 선택되도록 NAV_WAKE_SEC 동안 20Hz zero twist 발행
             self._start_nav_wake()
+            return
 
-        # 3) tracking
-        elif self.recall_state == 'tracking':
-            # 필요 시 완료 감지 후 자동 재개
+        # 3) tracking_ext: 소화기 위치 도착 감시
+        if self.recall_state == 'tracking_ext':
             try:
                 if self.nav.isTaskComplete():
                     _ = self.nav.getResult()
                     try: self.nav.cancelTask()
                     except Exception: pass
-
-                    self.get_logger().info('[RECALL] Reached goal. Recall finished.')
-                    self.recall_active = False
-                    self.recall_state  = 'idle'
-                    self.pub_recall.publish(Bool(data=False))  # 리콜 종료(라치 False)
-
-                    # 다음 화재 다시 트리거 가능
-                    self._schedule_auto_resume()
+                    self.get_logger().info('[RECALL] Reached extinguisher location. Now going back to fire point...')
+                    self.recall_state = 'sending_back'
             except Exception:
                 pass
+            return
+
+        # 4) sending_back: 화재 감지 지점(방향 포함)으로 복귀
+        if self.recall_state == 'sending_back':
+            back_goal = self._make_back_goal_from_saved_pose()
+            if back_goal is None:
+                # 저장 실패 시 종료
+                self.get_logger().warn('[RECALL] No saved fire pose. Finishing recall here.')
+                self._finish_recall()
+                return
+
+            try: self.nav.clearLocalCostmap()
+            except Exception: pass
+            try: self.nav.clearGlobalCostmap()
+            except Exception: pass
+
+            self.get_logger().info('[RECALL] goToPose (back-to-fire) -> '
+                                   f'({back_goal.pose.position.x:.2f}, {back_goal.pose.position.y:.2f}) '
+                                   'with saved orientation.')
+            try:
+                self.nav.goToPose(back_goal)
+                self.recall_state = 'tracking_back'
+                self._last_goal_send_ns = self.get_clock().now().nanoseconds
+            except Exception as e:
+                self.get_logger().warn(f'[RECALL] goToPose(back) error: {e}')
+                self._finish_recall()  # 실패 시라도 정리
+                return
+
+            self._start_nav_wake()
+            return
+
+        # 5) tracking_back: 원래 화재 지점 도착 감시
+        if self.recall_state == 'tracking_back':
+            try:
+                if self.nav.isTaskComplete():
+                    _ = self.nav.getResult()
+                    try: self.nav.cancelTask()
+                    except Exception: pass
+                    self.get_logger().info('[RECALL] Back at fire location with original heading. Recall finished.')
+                    self._finish_recall()
+            except Exception:
+                pass
+            return
 
     # ---- helpers ----
     def _cancel_all(self):
@@ -385,14 +423,36 @@ class FireNode(Node):
         except Exception as e:
             self.get_logger().warn(f'[RECALL] CancelAll call failed: {e}')
 
-    def _publish_robot_pose(self):
+    def _publish_and_store_fire_pose(self):
+        """감지 순간 /amcl_pose를 퍼블리시(/fire/robot_pose)하고 내부에도 저장."""
         if not self.have_amcl or self.amcl_pose is None:
-            self.get_logger().warn('No AMCL pose yet — /fire/robot_pose skipped.')
+            self.get_logger().warn('No AMCL pose yet — /fire/robot_pose skipped & cannot store back pose.')
+            self._last_fire_pose = None
             return
         ps = PoseStamped()
         ps.header = self.amcl_pose.header
         ps.pose   = self.amcl_pose.pose.pose
         self.pub_robot_pose.publish(ps)
+        self._last_fire_pose = ps  # ★ 내부 저장
+        self.get_logger().info('[RECALL] Saved fire pose for back-to-fire.')
+
+    def _make_back_goal_from_saved_pose(self) -> PoseStamped | None:
+        """저장된 화재 지점 PoseStamped를 그대로 goal로 사용."""
+        if self._last_fire_pose is None:
+            return None
+        goal = PoseStamped()
+        goal.header.frame_id = 'map'
+        goal.header.stamp    = self.get_clock().now().to_msg()
+        goal.pose = self._last_fire_pose.pose  # 위치 + 방향 그대로
+        return goal
+
+    def _finish_recall(self):
+        """리콜 전체 종료 처리: 라치 False, 자동 재개 등."""
+        self.recall_active = False
+        self.recall_state  = 'idle'
+        self.pub_recall.publish(Bool(data=False))  # 리콜 종료(라치 False)
+        # 다음 화재 다시 트리거 가능하게 준비 + 순찰 자동 재개 핑
+        self._schedule_auto_resume()
 
     def _schedule_auto_resume(self):
         # 화재 한 번 감지 후엔 더 이상 재감지하지 않도록 플래그 유지
