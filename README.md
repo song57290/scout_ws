@@ -59,7 +59,7 @@ ros2 topic echo /fire/approach_goal
 ```bash
 ros2 topic info /auto_mode
 ```
-# Terminal 
+# Terminal 7
 ```bash
 ros2 topic echo /auto_mode
 ```

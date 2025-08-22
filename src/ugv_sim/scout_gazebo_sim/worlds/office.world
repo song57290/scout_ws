@@ -39907,12 +39907,12 @@
     <name>fire_extinguisher</name>
     <static>false</static>
     <pose>
-    1
-    3
+    13.02
+    3.27
     0
     0
     0
-    0
+    1.57
     </pose>
   </include>
 
