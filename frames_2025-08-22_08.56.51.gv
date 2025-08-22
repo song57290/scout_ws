@@ -1,0 +1,28 @@
+digraph G {
+"odom" -> "base_footprint"[label=" Broadcaster: default_authority\nAverage rate: 10.436\nBuffer length: 2.108\nMost recent transform: 12.678\nOldest transform: 10.57\n"];
+"map" -> "odom"[label=" Broadcaster: default_authority\nAverage rate: 20.588\nBuffer length: 1.7\nMost recent transform: 13.252\nOldest transform: 11.552\n"];
+"base_link" -> "front_right_wheel_link"[label=" Broadcaster: default_authority\nAverage rate: 35.075\nBuffer length: 2.68\nMost recent transform: 12.78\nOldest transform: 10.1\n"];
+"odom" -> "base_link"[label=" Broadcaster: default_authority\nAverage rate: 29.857\nBuffer length: 2.244\nMost recent transform: 12.78\nOldest transform: 10.536\n"];
+"base_link" -> "front_left_wheel_link"[label=" Broadcaster: default_authority\nAverage rate: 35.075\nBuffer length: 2.68\nMost recent transform: 12.78\nOldest transform: 10.1\n"];
+"base_link" -> "rear_right_wheel_link"[label=" Broadcaster: default_authority\nAverage rate: 35.075\nBuffer length: 2.68\nMost recent transform: 12.78\nOldest transform: 10.1\n"];
+"base_link" -> "rear_left_wheel_link"[label=" Broadcaster: default_authority\nAverage rate: 35.075\nBuffer length: 2.68\nMost recent transform: 12.78\nOldest transform: 10.1\n"];
+"gripper_connecter" -> "gripper_arm"[label=" Broadcaster: default_authority\nAverage rate: 60.949\nBuffer length: 2.74\nMost recent transform: 12.792\nOldest transform: 10.052\n"];
+"base_link" -> "gripper_connecter"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"gripper_base" -> "left_finger"[label=" Broadcaster: default_authority\nAverage rate: 60.949\nBuffer length: 2.74\nMost recent transform: 12.792\nOldest transform: 10.052\n"];
+"arm_vertical" -> "gripper_base"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"gripper_base" -> "right_finger"[label=" Broadcaster: default_authority\nAverage rate: 60.949\nBuffer length: 2.74\nMost recent transform: 12.792\nOldest transform: 10.052\n"];
+"gripper_arm" -> "arm_vertical"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"velodyne_mount_link" -> "camera_link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"base_link" -> "velodyne_mount_link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"velodyne_base_link" -> "front_laser"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"velodyne_mount_link" -> "velodyne_base_link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"velodyne_mount_link" -> "depth_camera_link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"base_link" -> "inertial_link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"left_finger" -> "left_finger_stopper"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"right_finger" -> "right_finger_stopper"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"velodyne_base_link" -> "velodyne"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1755820611.597446"[ shape=plaintext ] ;
+}->"map";
+}

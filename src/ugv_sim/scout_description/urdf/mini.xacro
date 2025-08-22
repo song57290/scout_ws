@@ -15,7 +15,6 @@
     <xacro:include filename="$(find scout_description)/urdf/laser.xacro"/>          <!-- 2D 스캔을 위한 laser.xacro 추가 -->
     <xacro:include filename="$(find scout_description)/urdf/camera.xacro"/>         <!-- camera.xacro 추가 -->
     <xacro:include filename="$(find scout_description)/urdf/depth_camera.xacro"/>   <!-- depth_camera 추가 -->
-    <!-- <xacro:include filename="$(find scout_description)/urdf/double_camera.xacro"/>   camera + depth camera 추가 -->
     <xacro:include filename="$(find scout_description)/urdf/gripper.xacro"/>   <!-- gripper 추가 -->
 
     <!-- Variables -->
