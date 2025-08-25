@@ -1,0 +1,11 @@
+python3 - <<'PY'
+import cv2, os
+print("cv2:", cv2.__version__)
+print("QT_QPA_PLATFORM:", os.environ.get("QT_QPA_PLATFORM"))
+print("XDG_SESSION_TYPE:", os.environ.get("XDG_SESSION_TYPE"))
+PY
+
+cv2: 4.5.4
+QT_QPA_PLATFORM: None
+XDG_SESSION_TYPE: x11
+

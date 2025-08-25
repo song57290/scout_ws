@@ -1,0 +1,449 @@
+ # ===== save as: env_report.sh =====
+set -euo pipefail
+
+echo "== OS =="
+lsb_release -a 2>/dev/null || cat /etc/os-release
+
+echo -e "\n== GPU/Driver =="
+nvidia-smi || true
+
+echo -e "\n== Python/Pip =="
+which python || true
+python --version || true
+which python3 || true
+python3 --version || true
+pip3 --version || true
+
+echo -e "\n== Virtualenv? =="
+echo "VIRTUAL_ENV=${VIRTUAL_ENV:-}"
+
+echo -e "\n== Torch/CUDA =="
+python3 - <<'PY'
+try:
+    import torch, torchvision
+    print("torch:", torch.__version__)
+    print("cuda_available:", torch.cuda.is_available())
+    print("torch.version.cuda:", torch.version.cuda)
+    print("device_count:", torch.cuda.device_count())
+    if torch.cuda.is_available():
+        print("current_device:", torch.cuda.current_device())
+        print("name:", torch.cuda.get_device_name(0))
+except Exception as e:
+    print("torch import error:", e)
+PY
+
+echo -e "\n== ROS distro/paths =="
+echo "ROS_DISTRO=${ROS_DISTRO:-}"
+echo "RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-}"
+echo "ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-}"
+echo "AMENT_PREFIX_PATH=${AMENT_PREFIX_PATH:-}" | tr ':' '\n' | sed 's/^/  /'
+echo "PYTHONPATH=${PYTHONPATH:-}"
+
+echo -e "\n== Workspaces sourced? =="
+env | grep -E 'ROS_DISTRO|UNDERLAY|OVERLAY|AMENT|COLCON_CURRENT_PREFIX' | sort
+
+echo -e "\n== Installed image transport plugins =="
+apt-cache policy ros-${ROS_DISTRO:-humble}-image-transport ros-${ROS_DISTRO:-humble}-image-transport-plugins | sed 's/^/  /'
+
+echo -e "\n== OpenCV/Qt backends =="
+python3 - <<'PY'
+try:
+    import cv2, os
+    print("cv2:", cv2.__version__)
+    print("QT_QPA_PLATFORM:", os.environ.get("QT_QPA_PLATFORM"))
+    print("XDG_SESSION_TYPE:", os.environ.get("XDG_SESSION_TYPE"))
+except Exception as e:
+    print("opencv import error:", e)
+PY
+
+echo -e "\n== ROS graph snapshot (topics/nodes) =="
+ros2 node list
+ros2 topic list
+ros2 topic list -t | grep -E '/fire|/recall|image_raw|compressed' || true
+
+echo -e "\n== QoS details for key topics =="
+for T in /fire/annotated_image/compressed /fire/annotated_image /recall_active /fire/detected /camera/image_raw; do
+  echo "--- $T"; ros2 topic info -v $T || true; done
+== OS ==
+Distributor ID:	Ubuntu
+Description:	Ubuntu 22.04.5 LTS
+Release:	22.04
+Codename:	jammy
+
+== GPU/Driver ==
+Mon Aug 25 13:10:15 2025       
++---------------------------------------------------------------------------------------+
+| NVIDIA-SMI 535.247.01             Driver Version: 535.247.01   CUDA Version: 12.2     |
+|-----------------------------------------+----------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |
+|                                         |                      |               MIG M. |
+|=========================================+======================+======================|
+|   0  NVIDIA GeForce RTX 4090        Off | 00000000:01:00.0  On |                  Off |
+| 30%   45C    P2              80W / 450W |   3083MiB / 24564MiB |     12%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+                                                                                         
++---------------------------------------------------------------------------------------+
+| Processes:                                                                            |
+|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |
+|        ID   ID                                                             Usage      |
+|=======================================================================================|
+|    0   N/A  N/A      1442      G   /usr/lib/xorg/Xorg                         1005MiB |
+|    0   N/A  N/A      1755    C+G   ...libexec/gnome-remote-desktop-daemon      390MiB |
+|    0   N/A  N/A      1835      G   /usr/bin/gnome-shell                        190MiB |
+|    0   N/A  N/A     30881      G   ...seed-version=20250822-130033.396000      139MiB |
+|    0   N/A  N/A     32510      G   ...erProcess --variations-seed-version      100MiB |
+|    0   N/A  N/A     55529      G   gzserver                                    288MiB |
+|    0   N/A  N/A     55531      G   gzclient                                    285MiB |
+|    0   N/A  N/A     56098      G   /opt/ros/humble/lib/rviz2/rviz2              19MiB |
+|    0   N/A  N/A     57616      C   python                                      570MiB |
++---------------------------------------------------------------------------------------+
+
+== Python/Pip ==
+/usr/bin/python
+Python 3.10.12
+/usr/bin/python3
+Python 3.10.12
+pip 25.1.1 from /home/etri/.local/lib/python3.10/site-packages/pip (python 3.10)
+
+== Virtualenv? ==
+VIRTUAL_ENV=
+
+== Torch/CUDA ==
+torch: 2.5.1+cu121
+cuda_available: True
+torch.version.cuda: 12.1
+device_count: 1
+current_device: 0
+name: NVIDIA GeForce RTX 4090
+
+== ROS distro/paths ==
+ROS_DISTRO=humble
+RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+ROS_DOMAIN_ID=
+  AMENT_PREFIX_PATH=/home/etri/ros21_ws/install/two_wheeled_robot
+  /home/etri/ros21_ws/install/go2_description
+  /home/etri/ros21_ws/install/go2_config
+  /home/etri/ros21_ws/install/champ_teleop
+  /home/etri/ros21_ws/install/champ_navigation
+  /home/etri/ros21_ws/install/champ_gazebo
+  /home/etri/ros21_ws/install/champ_bringup
+  /home/etri/ros21_ws/install/champ_base
+  /home/etri/ros21_ws/install/champ_msgs
+  /home/etri/ros21_ws/install/champ_description
+  /home/etri/ros21_ws/install/champ_config
+  /home/etri/ros21_ws/install/champ
+  /home/etri/ros2_ws/install/two_wheeled_robot
+  /opt/ros/humble
+PYTHONPATH=/home/etri/ros21_ws/install/two_wheeled_robot/lib/python3.12/site-packages:/home/etri/ros21_ws/install/champ_bringup/local/lib/python3.10/dist-packages:/home/etri/ros21_ws/install/champ_msgs/local/lib/python3.10/dist-packages:/home/etri/ros2_ws/install/two_wheeled_robot/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/home/etri/isaaclab
+
+== Workspaces sourced? ==
+AMENT_PREFIX_PATH=/home/etri/ros21_ws/install/two_wheeled_robot:/home/etri/ros21_ws/install/go2_description:/home/etri/ros21_ws/install/go2_config:/home/etri/ros21_ws/install/champ_teleop:/home/etri/ros21_ws/install/champ_navigation:/home/etri/ros21_ws/install/champ_gazebo:/home/etri/ros21_ws/install/champ_bringup:/home/etri/ros21_ws/install/champ_base:/home/etri/ros21_ws/install/champ_msgs:/home/etri/ros21_ws/install/champ_description:/home/etri/ros21_ws/install/champ_config:/home/etri/ros21_ws/install/champ:/home/etri/ros2_ws/install/two_wheeled_robot:/opt/ros/humble
+ROS_DISTRO=humble
+
+== Installed image transport plugins ==
+  ros-humble-image-transport:
+    Installed: 3.1.12-1jammy.20250719.025547
+    Candidate: 3.1.12-1jammy.20250719.025547
+    Version table:
+   *** 3.1.12-1jammy.20250719.025547 500
+          500 http://packages.ros.org/ros2/ubuntu jammy/main amd64 Packages
+          100 /var/lib/dpkg/status
+  ros-humble-image-transport-plugins:
+    Installed: 2.5.3-1jammy.20250719.043951
+    Candidate: 2.5.3-1jammy.20250719.043951
+    Version table:
+   *** 2.5.3-1jammy.20250719.043951 500
+          500 http://packages.ros.org/ros2/ubuntu jammy/main amd64 Packages
+          100 /var/lib/dpkg/status
+
+== OpenCV/Qt backends ==
+cv2: 4.5.4
+QT_QPA_PLATFORM: None
+XDG_SESSION_TYPE: x11
+
+== ROS graph snapshot (topics/nodes) ==
+WARNING: Be aware that are nodes in the graph that share an exact name, this can have unintended side effects.
+/amcl
+/basic_navigator
+/basic_navigator
+/behavior_server
+/bt_navigator
+/bt_navigator_navigate_through_poses_rclcpp_node
+/bt_navigator_navigate_to_pose_rclcpp_node
+/cmd_vel_switch
+/color_camera_controller
+/controller_manager
+/controller_server
+/depth_camera_controller
+/diff_drive
+/ekf_filter_node
+/gazebo
+/gazebo_ros2_control
+/gazebo_ros_front_laserscan
+/gazebo_ros_laser_controller
+/global_costmap/global_costmap
+/gripper_controller
+/gripper_height_controller
+/joint_state_broadcaster
+/joint_state_publisher
+/launch_ros_55504
+/lifecycle_manager_localization
+/lifecycle_manager_navigation
+/local_costmap/local_costmap
+/map_server
+/nav2_container
+/planner_server
+/robot_state_publisher
+/rosbridge_websocket
+/rviz2
+/rviz_navigation_dialog_action_client
+/smoother_server
+/transform_listener_impl_57a73aa02800
+/transform_listener_impl_58c40101ec50
+/transform_listener_impl_792ed4003a30
+/transform_listener_impl_792ed8002cc0
+/transform_listener_impl_792ee4002cc0
+/transform_listener_impl_792eec0041e0
+/transform_listener_impl_792f180024a0
+/velocity_smoother
+/waypoint_follower
+/waypoint_follower_client
+/web_video_server
+/yolo_fire_detection
+/amcl/transition_event
+/amcl_pose
+/auto_mode
+/behavior_server/transition_event
+/behavior_tree_log
+/bond
+/bt_navigator/transition_event
+/camera/camera_info
+/camera/image_raw
+/camera/image_raw/compressed
+/camera/image_raw/compressedDepth
+/camera/image_raw/theora
+/clicked_point
+/client_count
+/clock
+/cmd_vel
+/cmd_vel_joy
+/cmd_vel_nav
+/connected_clients
+/controller_server/transition_event
+/depth_camera/camera_info
+/depth_camera/depth/camera_info
+/depth_camera/depth/image_raw
+/depth_camera/depth/image_raw/compressed
+/depth_camera/depth/image_raw/compressedDepth
+/depth_camera/depth/image_raw/theora
+/depth_camera/image_raw
+/depth_camera/image_raw/compressed
+/depth_camera/image_raw/compressedDepth
+/depth_camera/image_raw/theora
+/depth_camera/points
+/diagnostics
+/dynamic_joint_states
+/fire/annotated_image/compressed
+/fire/approach_goal
+/fire/detected
+/fire/robot_pose
+/global_costmap/costmap
+/global_costmap/costmap_raw
+/global_costmap/costmap_updates
+/global_costmap/footprint
+/global_costmap/global_costmap/transition_event
+/global_costmap/published_footprint
+/goal_pose
+/gripper_controller/commands
+/gripper_controller/transition_event
+/gripper_height_controller/commands
+/gripper_height_controller/transition_event
+/initialpose
+/joint_state_broadcaster/transition_event
+/joint_states
+/local_costmap/clearing_endpoints
+/local_costmap/costmap
+/local_costmap/costmap_raw
+/local_costmap/costmap_updates
+/local_costmap/footprint
+/local_costmap/local_costmap/transition_event
+/local_costmap/published_footprint
+/local_costmap/voxel_grid
+/local_plan
+/lookahead_collision_arc
+/lookahead_point
+/map
+/map_server/transition_event
+/map_updates
+/odom
+/odometry/filtered
+/parameter_events
+/particle_cloud
+/performance_metrics
+/plan
+/plan_smoothed
+/planner_server/transition_event
+/recall_active
+/received_global_plan
+/robot_description
+/rosout
+/scan
+/set_pose
+/smoother_server/transition_event
+/speed_limit
+/tf
+/tf_static
+/velocity_smoother/transition_event
+/velodyne_points
+/waypoint_follower/transition_event
+/waypoints
+/camera/image_raw [sensor_msgs/msg/Image]
+/camera/image_raw/compressed [sensor_msgs/msg/CompressedImage]
+/camera/image_raw/compressedDepth [sensor_msgs/msg/CompressedImage]
+/camera/image_raw/theora [theora_image_transport/msg/Packet]
+/depth_camera/depth/image_raw [sensor_msgs/msg/Image]
+/depth_camera/depth/image_raw/compressed [sensor_msgs/msg/CompressedImage]
+/depth_camera/depth/image_raw/compressedDepth [sensor_msgs/msg/CompressedImage]
+/depth_camera/depth/image_raw/theora [theora_image_transport/msg/Packet]
+/depth_camera/image_raw [sensor_msgs/msg/Image]
+/depth_camera/image_raw/compressed [sensor_msgs/msg/CompressedImage]
+/depth_camera/image_raw/compressedDepth [sensor_msgs/msg/CompressedImage]
+/depth_camera/image_raw/theora [theora_image_transport/msg/Packet]
+/fire/annotated_image/compressed [sensor_msgs/msg/CompressedImage]
+/fire/approach_goal [geometry_msgs/msg/PoseStamped]
+/fire/detected [std_msgs/msg/Bool]
+/fire/robot_pose [geometry_msgs/msg/PoseStamped]
+/recall_active [std_msgs/msg/Bool]
+
+== QoS details for key topics ==
+--- /fire/annotated_image/compressed
+Type: sensor_msgs/msg/CompressedImage
+
+Publisher count: 1
+
+Node name: yolo_fire_detection
+Node namespace: /
+Topic type: sensor_msgs/msg/CompressedImage
+Endpoint type: PUBLISHER
+GID: 01.0f.76.9e.10.e1.81.04.00.00.00.00.00.00.14.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 0
+
+--- /fire/annotated_image
+Unknown topic '/fire/annotated_image'
+--- /recall_active
+Type: std_msgs/msg/Bool
+
+Publisher count: 1
+
+Node name: yolo_fire_detection
+Node namespace: /
+Topic type: std_msgs/msg/Bool
+Endpoint type: PUBLISHER
+GID: 01.0f.76.9e.10.e1.81.04.00.00.00.00.00.00.19.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: TRANSIENT_LOCAL
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 1
+
+Node name: waypoint_follower_client
+Node namespace: /
+Topic type: std_msgs/msg/Bool
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.76.9e.3d.db.fd.96.00.00.00.00.00.00.58.04.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+--- /fire/detected
+Type: std_msgs/msg/Bool
+
+Publisher count: 1
+
+Node name: yolo_fire_detection
+Node namespace: /
+Topic type: std_msgs/msg/Bool
+Endpoint type: PUBLISHER
+GID: 01.0f.76.9e.10.e1.81.04.00.00.00.00.00.00.15.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 0
+
+--- /camera/image_raw
+Type: sensor_msgs/msg/Image
+
+Publisher count: 1
+
+Node name: color_camera_controller
+Node namespace: /
+Topic type: sensor_msgs/msg/Image
+Endpoint type: PUBLISHER
+GID: 01.0f.76.9e.e9.d8.c5.37.00.00.00.00.00.00.3d.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 2
+
+Node name: yolo_fire_detection
+Node namespace: /
+Topic type: sensor_msgs/msg/Image
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.76.9e.10.e1.81.04.00.00.00.00.00.00.11.04.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: rviz2
+Node namespace: /
+Topic type: sensor_msgs/msg/Image
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.76.9e.22.db.f5.24.00.00.00.00.00.00.43.04.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+

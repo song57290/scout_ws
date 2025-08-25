@@ -1,0 +1,127 @@
+ros2 topic info -v /fire/annotated_image/compressed
+ros2 topic info -v /recall_active
+ros2 topic info -v /fire/detected
+ros2 topic info -v /camera/image_raw
+
+Type: sensor_msgs/msg/CompressedImage
+
+Publisher count: 1
+
+Node name: yolo_fire_detection
+Node namespace: /
+Topic type: sensor_msgs/msg/CompressedImage
+Endpoint type: PUBLISHER
+GID: 01.0f.76.9e.10.e1.81.04.00.00.00.00.00.00.14.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 0
+
+Type: std_msgs/msg/Bool
+
+Publisher count: 1
+
+Node name: yolo_fire_detection
+Node namespace: /
+Topic type: std_msgs/msg/Bool
+Endpoint type: PUBLISHER
+GID: 01.0f.76.9e.10.e1.81.04.00.00.00.00.00.00.19.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: TRANSIENT_LOCAL
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 1
+
+Node name: waypoint_follower_client
+Node namespace: /
+Topic type: std_msgs/msg/Bool
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.76.9e.3d.db.fd.96.00.00.00.00.00.00.58.04.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Type: std_msgs/msg/Bool
+
+Publisher count: 1
+
+Node name: yolo_fire_detection
+Node namespace: /
+Topic type: std_msgs/msg/Bool
+Endpoint type: PUBLISHER
+GID: 01.0f.76.9e.10.e1.81.04.00.00.00.00.00.00.15.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 0
+
+Type: sensor_msgs/msg/Image
+
+Publisher count: 1
+
+Node name: color_camera_controller
+Node namespace: /
+Topic type: sensor_msgs/msg/Image
+Endpoint type: PUBLISHER
+GID: 01.0f.76.9e.e9.d8.c5.37.00.00.00.00.00.00.3d.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 2
+
+Node name: yolo_fire_detection
+Node namespace: /
+Topic type: sensor_msgs/msg/Image
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.76.9e.10.e1.81.04.00.00.00.00.00.00.11.04.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: rviz2
+Node namespace: /
+Topic type: sensor_msgs/msg/Image
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.76.9e.22.db.f5.24.00.00.00.00.00.00.43.04.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+

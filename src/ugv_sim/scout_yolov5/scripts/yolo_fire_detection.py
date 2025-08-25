@@ -102,7 +102,7 @@ class FireNode(Node):
         # 히스테리시스: 트리거 직후 YOLO 행동 억제
         self._detect_freeze_until_ns = 0
 
-        # Auto resume (요청: 화재 때도 True 유지)
+        # Auto resume (화재 시에도 True 유지)
         self.AUTO_RESUME = True
         self.AUTO_RESUME_DELAY = 1.0
         self._resume_timer = None
@@ -135,7 +135,6 @@ class FireNode(Node):
         if _HAS_NAV2:
             self.nav = BasicNavigator()
             self.nav.waitUntilNav2Active()
-            self.get_logger().info('Nav2 is ready for use!')
         else:
             self.nav = None
             self.get_logger().warn('Nav2(Simple Commander) not available — recall disabled.')
@@ -261,7 +260,7 @@ class FireNode(Node):
             self.get_logger().warn('[RECALL] Nav2 not available — skip.')
             return
 
-        # 요청사항: 화재 감지 시에도 자동 모드 True 유지(사용자 babysit 방지)
+        # 화재 감지 시에도 자동 모드 True 유지(사용자 조정모드 변환 방지)
         self.pub_auto.publish(Bool(data=True))
 
         now_ns = self.get_clock().now().nanoseconds

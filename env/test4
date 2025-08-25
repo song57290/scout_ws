@@ -1,0 +1,4 @@
+echo "VIRTUAL_ENV=${VIRTUAL_ENV:-}"
+
+VIRTUAL_ENV=
+

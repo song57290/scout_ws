@@ -1,0 +1,18 @@
+apt-cache policy ros-${ROS_DISTRO:-humble}-image-transport \
+                 ros-${ROS_DISTRO:-humble}-image-transport-plugins
+                 
+ros-humble-image-transport:
+  Installed: 3.1.12-1jammy.20250719.025547
+  Candidate: 3.1.12-1jammy.20250719.025547
+  Version table:
+ *** 3.1.12-1jammy.20250719.025547 500
+        500 http://packages.ros.org/ros2/ubuntu jammy/main amd64 Packages
+        100 /var/lib/dpkg/status
+ros-humble-image-transport-plugins:
+  Installed: 2.5.3-1jammy.20250719.043951
+  Candidate: 2.5.3-1jammy.20250719.043951
+  Version table:
+ *** 2.5.3-1jammy.20250719.043951 500
+        500 http://packages.ros.org/ros2/ubuntu jammy/main amd64 Packages
+        100 /var/lib/dpkg/status
+

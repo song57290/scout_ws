@@ -1,0 +1,31 @@
+nvidia-smi
+
+Mon Aug 25 13:16:10 2025       
++---------------------------------------------------------------------------------------+
+| NVIDIA-SMI 535.247.01             Driver Version: 535.247.01   CUDA Version: 12.2     |
+|-----------------------------------------+----------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |
+|                                         |                      |               MIG M. |
+|=========================================+======================+======================|
+|   0  NVIDIA GeForce RTX 4090        Off | 00000000:01:00.0  On |                  Off |
+| 30%   46C    P2              81W / 450W |   3105MiB / 24564MiB |     12%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+                                                                                         
++---------------------------------------------------------------------------------------+
+| Processes:                                                                            |
+|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |
+|        ID   ID                                                             Usage      |
+|=======================================================================================|
+|    0   N/A  N/A      1442      G   /usr/lib/xorg/Xorg                          997MiB |
+|    0   N/A  N/A      1755    C+G   ...libexec/gnome-remote-desktop-daemon      390MiB |
+|    0   N/A  N/A      1835      G   /usr/bin/gnome-shell                        193MiB |
+|    0   N/A  N/A     30881      G   ...seed-version=20250822-130033.396000      193MiB |
+|    0   N/A  N/A     32510      G   ...erProcess --variations-seed-version       77MiB |
+|    0   N/A  N/A     55529      G   gzserver                                    288MiB |
+|    0   N/A  N/A     55531      G   gzclient                                    285MiB |
+|    0   N/A  N/A     56098      G   /opt/ros/humble/lib/rviz2/rviz2              15MiB |
+|    0   N/A  N/A     57616      C   python                                      570MiB |
++---------------------------------------------------------------------------------------+
+
