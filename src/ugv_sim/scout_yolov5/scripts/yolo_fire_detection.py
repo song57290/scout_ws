@@ -424,7 +424,7 @@ class FireNode(Node):
             self.get_logger().warn(f'[RECALL] CancelAll call failed: {e}')
 
     def _publish_and_store_fire_pose(self):
-        """감지 순간 /amcl_pose를 퍼블리시(/fire/robot_pose)하고 내부에도 저장."""
+        # 감지 순간 /amcl_pose를 퍼블리시(/fire/robot_pose)하고 내부에도 저장.
         if not self.have_amcl or self.amcl_pose is None:
             self.get_logger().warn('No AMCL pose yet — /fire/robot_pose skipped & cannot store back pose.')
             self._last_fire_pose = None

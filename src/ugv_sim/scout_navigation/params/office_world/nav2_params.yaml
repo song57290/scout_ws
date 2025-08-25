@@ -6,7 +6,7 @@ amcl:
     alpha3: 0.002
     alpha4: 0.002
     alpha5: 0.002
-    base_frame_id: "gripper_connecter"
+    base_frame_id: "base_link" # "gripper_connecter"
     beam_skip_distance: 0.5
     beam_skip_error_threshold: 0.9
     beam_skip_threshold: 0.3
@@ -53,7 +53,7 @@ bt_navigator:
   ros__parameters:
     use_sim_time: True
     global_frame: map
-    robot_base_frame: gripper_connecter
+    robot_base_frame: base_link # gripper_connecter
     odom_topic: /odometry/filtered #/wheel/odometry
     bt_loop_duration: 10
     default_server_timeout: 20
@@ -176,7 +176,7 @@ local_costmap:
       update_frequency: 10.0 
       publish_frequency: 10.0
       global_frame: odom
-      robot_base_frame: gripper_connecter
+      robot_base_frame: base_link # gripper_connecter
       transform_tolerance: 0.30
       use_sim_time: True
       rolling_window: true
@@ -225,7 +225,7 @@ global_costmap:
       update_frequency: 10.0
       publish_frequency: 10.0
       global_frame: map
-      robot_base_frame: gripper_connecter
+      robot_base_frame: base_link # gripper_connecter
       transform_tolerance: 0.30
       use_sim_time: True
       robot_radius: 0.25 # 0.85
@@ -302,7 +302,7 @@ recoveries_server:
     wait:
       plugin: "nav2_recoveries/Wait"
     global_frame: odom
-    robot_base_frame: gripper_connecter
+    robot_base_frame: base_link # gripper_connecter
     transform_timeout: 0.1
     use_sim_time: true
     simulate_ahead_time: 2.0
@@ -338,7 +338,7 @@ slam_toolbox:
     # ROS Parameters
     odom_frame: odom
     map_frame: map
-    base_frame: gripper_connecter
+    base_frame: base_link # gripper_connecter
     scan_topic: /scan
     mode: mapping #localization
 
